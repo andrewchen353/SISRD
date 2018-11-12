@@ -1,1 +1,4 @@
 .idea
+test_images_64x64
+train_images_64x64
+train_images_128x128
