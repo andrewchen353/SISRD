@@ -3,8 +3,12 @@ from keras.layers import Input, Add, Conv2D, Deconv2D, UpSampling2D, BatchNormal
 from keras.models import Model, load_model
 from keras.optimizers import Adam
 from keras.callbacks import Callback
+from keras import backend as K
 import h5py
 
+_EPSILON = K.epsilon()
+_W = 160
+_H = 160
 
 ######################################################
 # By default keras is using TensorFlow as a backend
@@ -41,8 +45,13 @@ def generate_model():
 
     model = Model(x_input, y_output)
     adam = Adam(lr=0.01)
-    model.compile(optimizer=adam, loss='mean_squared_error', metrics=['accuracy'])
+    #model.compile(optimizer=adam, loss='mean_squared_error', metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
+
+def rmse(y_true, y_pred):
+    diff = K.square(y_pred - y_true)
+    return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (_W * _H)))
 
 def load_model():
     pass
