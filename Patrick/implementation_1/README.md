@@ -1,4 +1,4 @@
-First Implementation by Patrick
+# Implementation 1
 
 Will first utilize Keras, and maybe try to optimize later with PyTorch
 
