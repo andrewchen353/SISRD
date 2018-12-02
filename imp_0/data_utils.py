@@ -13,9 +13,17 @@ def load_data(path):
         data.append(img)
     return np.array(data)
 
-def save_images(path,size):
-    pass
+def save_images(path, imageNames, images):
+    names = sorted(listdir(imageNames))
+    for file, i in zip(names, np.arange(len(names))):
+        img = images[i]
+        w, h, _ = img.shape
+        img.resize((w,h))
+        img = img * 255
+        img = img.astype(np.int)
+        imwrite(path + file, img)
+
+    return
 
 if __name__ == "__main__":
-    #print(load_input_data('/Users/Patrick/Downloads/xray_images/train_images_64x64/').shape)
-    print(load_data('xray_images/train_images_128x128/').shape)
+    print("data_utils test")

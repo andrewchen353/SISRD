@@ -41,23 +41,23 @@ def generate_model():
     sbdeconv2 = Add()([rldeconv2, rlconv1])
 
     conv4 = Conv2D(1, (1,1), use_bias=True, name='conv4')(sbdeconv2)
-    y_output = conv4#UpSampling2D(size=(2,2), interpolation='bilinear')(conv4)
+    y_output = conv4 #UpSampling2D(size=(2,2), interpolation='bilinear')(conv4)
 
     model = Model(x_input, y_output)
-    adam = Adam(lr=0.001)
-    model.compile(optimizer=adam, loss='mean_squared_error', metrics=['accuracy'])
-    #model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    adam = Adam(lr=0.01)
+    #model.compile(optimizer=adam, loss='mean_squared_error', metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
 
 def rmse(y_true, y_pred):
     diff = K.square(y_pred - y_true)
     return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (_W * _H)))
 
-def load_model():
-    pass
+def loadModel(modelName):
+    return load_model(modelName)
 
-def save_model(model):
-    model.save('first_attempt.h5')
+def saveModel(model, modelName):
+    model.save(modelName)
 
 if __name__ == "__main__":
     print('test imports')
