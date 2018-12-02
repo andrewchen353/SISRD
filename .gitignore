@@ -1,5 +1,11 @@
 .idea
 .vscode
+.DS_Store
 test_images_64x64
+test_images_128x128
 train_images_64x64
 train_images_128x128
+xray_images
+*.pyc
+__pycache__
+sisrd.code-workspace
