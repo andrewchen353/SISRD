@@ -1,5 +1,3 @@
-First Implementation by Patrick
+# Implementation 0
 
-Will first utilize Keras, and maybe try to optimize later with PyTorch
-
-Basic architecture is similar to that of the paper 'Image-to-Image Translation with Conditional Adversarial Nets'
+Simple neural network, convolution and then deconvolution.
