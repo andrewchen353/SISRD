@@ -28,8 +28,8 @@ def generate_model():
     y_output = rldeconv1
 
     model = Model(x_input, y_output)
-    adam = Adam(lr=0.01)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    adam = Adam(lr=0.003)
+    model.compile(optimizer=adam, loss="mean_squared_error", metrics=['accuracy'])
     return model
 
 def rmse(y_true, y_pred):
@@ -40,7 +40,7 @@ def load_model():
     pass
 
 def save_model(model):
-    model.save('first_attempt.h5')
+    model.save('second_attempt.h5')
 
 if __name__ == "__main__":
     print('test imports')
