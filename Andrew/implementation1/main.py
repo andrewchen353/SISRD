@@ -22,8 +22,6 @@ def save_images(path, imageNames, images):
         img = img.astype(np.int)
         imwrite(path + file, img)
 
-    return
-
 def main():
     test_64_path = "xray/test_images_64x64/"
     train_64_path = "xray/train_images_64x64/"
@@ -34,15 +32,21 @@ def main():
         exit(1)
         
     if sys.argv[1] == "--train":
-        nn = createModel()
+        print("Creating model...")
+        nn = neural_net.createModel()
+        print("Loading images...")
         train_images_64 = load_images(train_64_path)
+        print(train_images_64.shape)
         train_images_128 = load_images(train_128_path)
-        nn.fit(train_images_64, train_images_128, batch_size=1000, epochs=50)
+        print("Training model...")
+        nn.fit(train_images_64, train_images_128, batch_size=4000, epochs=50)
+        print("Saving model")
         model.save(sys.argv[3])
     elif sys.argv[1] == "--test":
-        nn = model.loadModel(argv[3])
+        nn = load_model(sys.argv[3]) # model.loadModel(argv[3])
         test_images_64 = load_images(test_64_path)
-        test_out_128 = nn.predict(test_images_64)
+        test_out_64 = nn.predict(test_images_64)
+        test_out_128 = [cv2.resize(img, (128,128), interpolation=INTER_CUBIC) for img in test_out_64]
         save_images("xray/test_images_128x128", test_images_64, test_out_128)
 
 main()
