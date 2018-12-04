@@ -5,3 +5,5 @@
 [Sparsity-based Image Denoising via Dictionary Learning and Structural Clustering](http://see.xidian.edu.cn/faculty/wsdong/Papers/Conference/0697.pdf)
 
 [Image-to-Image Translation with Conditional Adversarial Networks](https://arxiv.org/pdf/1611.07004.pdf)
+
+[Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network](https://arxiv.org/pdf/1609.05158.pdf)

@@ -1,5 +1,5 @@
 import numpy as np
-from cv2 import imread, imwrite, resize, INTER_CUBIC
+from cv2 import imread, imwrite, resize, INTER_CUBIC, imshow, waitKey, destroyAllWindows
 from os import listdir
 
 def load_data(path):
@@ -8,7 +8,7 @@ def load_data(path):
         img = imread(path + file, 0)
         img = resize(img, (128,128), interpolation=INTER_CUBIC)
         w, h = img.shape
-        img.resize((w,h,1))
+        img = img.reshape((w,h,1))
         img = img.astype(np.float32) / 255
         data.append(img)
     return np.array(data)
@@ -18,12 +18,13 @@ def save_images(path, imageNames, images):
     for file, i in zip(names, np.arange(len(names))):
         img = images[i]
         w, h, _ = img.shape
-        img.resize((w,h))
+        img = img.reshape((w,h))
         img = img * 255
-        img = img.astype(np.int)
+        img = img.astype(np.uint8)
         imwrite(path + file, img)
-
     return
 
 if __name__ == "__main__":
     print("data_utils test")
+    imgs = load_data('xray_images/train_images_64x64/')
+    save_images('test/', 'xray_images/train_images_64x64/', imgs)
