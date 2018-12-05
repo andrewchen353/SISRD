@@ -45,3 +45,6 @@ def createModel():
     model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
 
     return model
+
+def loadModel(name):
+    return load_model(name)

@@ -19,17 +19,18 @@ def load_images(path):
     return np.array(data)
 
 def save_images(path, imageNames, images):
-    names = sorted(listdir(imageNames))
+    names = sorted(os.listdir(imageNames))
     for file, i in zip(names, np.arange(len(names))):
         img = images[i]
         w, h, _ = img.shape
         img.resize((w,h))
         img = img * 255
         img = img.astype(np.uint8)
-        imwrite(path + file, img)
+        cv2.imwrite(path + file, img)
 
 def main():
     test_64_path = "xray/test_images_64x64/"
+    test_128_path = "xray/test_images_128x128"
     train_64_path = "xray/train_images_64x64/"
     train_128_path = "xray/train_images_128x128/"
 
@@ -54,10 +55,13 @@ def main():
             test_out_64 = nn.predict(test_images_64)
             save_images("xray/test_images_128x128", test_images_64, test_out_128)
     elif sys.argv[1] == "--test":
-        nn = load_model(sys.argv[3]) # model.loadModel(argv[3])
+        print("Loading model...")
+        nn = neural_net.loadModel(sys.argv[3])
+        print("Loading test images...")
         test_images_64 = load_images(test_64_path)
-        test_out_64 = nn.predict(test_images_64)
-        # test_out_128 = [cv2.resize(img, (128,128), interpolation=INTER_CUBIC) for img in test_out_64]
-        save_images("xray/test_images_128x128", test_images_64, test_out_128)
+        print("Predicting...")
+        test_out_128 = nn.predict(test_images_64)
+        print("Saving images...")
+        save_images(test_128_path, test_64_path, test_out_128)
 
 main()
