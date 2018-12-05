@@ -25,8 +25,8 @@ def generate_model():
     y_output = conv3
 
     model = Model(x_input, y_output)
-    adam = Adam(lr=0.01)
-    model.compile(optimizer=adam, loss="mean_squared_error", metrics=['accuracy'])
+    adam = Adam(lr=0.001)
+    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
 
 def rmse(y_true, y_pred):
@@ -34,8 +34,8 @@ def rmse(y_true, y_pred):
     return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (_W * _H)))
 
 def loadModel(modelName):
-    #return load_model(modelName, custom_objects={'rmse': rmse})
-    return load_model(modelName)
+    return load_model(modelName, custom_objects={'rmse': rmse})
+    #return load_model(modelName)
 
 def saveModel(model, modelName):
     model.save(modelName)
