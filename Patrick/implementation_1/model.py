@@ -17,12 +17,11 @@ _H = 128
 def generate_model():
     x_input = Input((128, 128, 1))
 
-    conv1 = Conv2D(64, (7,7), padding='same', use_bias=True, name='conv1')(x_input)
+    conv1 = Conv2D(64, (9,9), padding='same', use_bias=True, name='conv1')(x_input)
     bnconv1 = BatchNormalization(axis=3, name='bn_conv1')(conv1)
     rlconv1 = LeakyReLU(alpha=0.3, name='rl_conv1')(bnconv1)
 
-
-    conv2 = Conv2D(64, (5,5), strides=(2,2), use_bias=True, name='conv2')(rlconv1)
+    conv2 = Conv2D(64, (5,5), use_bias=True, name='conv2')(rlconv1)
     bnconv2 = BatchNormalization(axis=3, name='bn_conv2')(conv2)
     rlconv2 = LeakyReLU(alpha=0.3, name='rl_conv2')(bnconv2)
 
@@ -35,16 +34,16 @@ def generate_model():
     rldeconv1 = LeakyReLU(alpha=0.3, name='rl_deconv1')(bndeconv1)
     sbdeconv1 = Add()([rldeconv1, rlconv2])
 
-    deconv2 = Deconv2D(64, (5,5), strides=(2,2), output_padding=(1,1), use_bias=True, name='deconv2')(sbdeconv1)
+    deconv2 = Deconv2D(64, (5,5), output_padding=(1,1), use_bias=True, name='deconv2')(sbdeconv1)
     bndeconv2 = BatchNormalization(axis=3, name='bn_deconv2')(deconv2)
     rldeconv2 = LeakyReLU(alpha=0.3, name='rl_deconv2')(bndeconv2)
     sbdeconv2 = Add()([rldeconv2, rlconv1])
 
-    conv4 = Conv2D(1, (1,1), use_bias=True, name='conv4')(sbdeconv2)
+    conv4 = Conv2D(1, (1,1), use_bias=True, activation='relu', name='conv4')(sbdeconv2)
     y_output = conv4 #UpSampling2D(size=(2,2), interpolation='bilinear')(conv4)
 
     model = Model(x_input, y_output)
-    adam = Adam(lr=0.01)
+    adam = Adam(lr=0.001)
     #model.compile(optimizer=adam, loss='mean_squared_error', metrics=['accuracy'])
     model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
