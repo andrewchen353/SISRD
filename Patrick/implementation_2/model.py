@@ -1,5 +1,6 @@
 import numpy as np
 from keras.layers import Input, Add, Conv2D, Deconv2D, UpSampling2D, BatchNormalization, LeakyReLU
+from keras.activations import relu
 from keras.models import Model, load_model
 from keras.optimizers import Adam
 from keras.callbacks import Callback
@@ -17,15 +18,11 @@ _H = 128
 def generate_model():
     x_input = Input((128, 128, 1))
 
-    conv1 = Conv2D(1, (7,7), padding='valid', use_bias=True, name='conv1')(x_input)
-    bnconv1 = BatchNormalization(axis=3, name='bn_conv1')(conv1)
-    rlconv1 = LeakyReLU(alpha=0.0, name='rl_conv1')(bnconv1)
+    conv1 = Conv2D(64, (9,9), padding='same', use_bias=True, activation='relu', name='conv1')(x_input)
+    conv2 = Conv2D(32, (5,5), padding='same', use_bias=True, activation='relu', name='conv2')(conv1)
+    conv3 = Conv2D(1 , (5,5), padding='same', use_bias=True, activation='relu', name='conv3')(conv2)
 
-    deconv1 = Deconv2D(1, (7,7), use_bias=True, name='deconv1')(rlconv1)
-    bndeconv1 = BatchNormalization(axis=3, name='bn_deconv1')(deconv1)
-    rldeconv1 = LeakyReLU(alpha=0.0, name='rl_deconv1')(bndeconv1)
-
-    y_output = rldeconv1
+    y_output = conv3
 
     model = Model(x_input, y_output)
     adam = Adam(lr=0.01)
