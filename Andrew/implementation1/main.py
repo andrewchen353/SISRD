@@ -51,7 +51,7 @@ def main():
         train_output = load_images(train_128_path)
         print(train_output.shape)
         print("Training model...")
-        nn.fit(train_input, train_output, batch_size=4000, epochs=50)
+        nn.fit(train_input, train_output, batch_size=128, epochs=50)
         print("Saving model")
         model.save(sys.argv[3])
     elif sys.argv[1] == "--test":
