@@ -42,6 +42,6 @@ def createModel():
 
     model = Model(x_input, conv5)
 
-    model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.03), metrics=['accuracy'])
+    model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
 
     return model
