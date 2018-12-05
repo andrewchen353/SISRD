@@ -6,17 +6,12 @@ import sys
 
 
 def load_images(path):
-    # img = []
-    # for p in sorted(os.listdir(path)):
-    #     im = cv2.imread(path + p, 0)
-    #     w, h = im.shape
-    #     im.resize((w, h, 1))
-    #     img.append(cv2.bitwise_not(im)/255)
-    # return np.array(img)
     data = []
     for file in sorted(os.listdir(path)):
         img = cv2.imread(path + file, 0)
-        img = cv2.resize(img, (128,128), interpolation=cv2.INTER_CUBIC)
+        w, h = img.shape
+        if w == 64 and h == 64:
+            img = cv2.resize(img, (128,128), interpolation=cv2.INTER_CUBIC)
         w, h = img.shape
         img.resize((w,h,1))
         img = img.astype(np.float32) / 255
@@ -53,7 +48,11 @@ def main():
         print("Training model...")
         nn.fit(train_input, train_output, batch_size=128, epochs=10)
         print("Saving model")
-        model.save(sys.argv[3])
+        nn.save(sys.argv[3])
+        if sys.argv[2] == "--test":
+            test_images_64 = load_images(test_64_path)
+            test_out_64 = nn.predict(test_images_64)
+            save_images("xray/test_images_128x128", test_images_64, test_out_128)
     elif sys.argv[1] == "--test":
         nn = load_model(sys.argv[3]) # model.loadModel(argv[3])
         test_images_64 = load_images(test_64_path)
