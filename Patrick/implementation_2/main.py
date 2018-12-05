@@ -19,7 +19,7 @@ def main():
         nn = model.generate_model()
         training_input = data_utils.load_data(training_input_dir)
         training_output = data_utils.load_data(training_output_dir)
-        nn.fit(training_input, training_output, batch_size=1000, epochs=100)
+        nn.fit(training_input, training_output, batch_size=1000, epochs=60)
         model.saveModel(nn, args.model)
         test = input("Do you want to test with the test images too? ")
         if test == 'yes':

@@ -6,7 +6,8 @@ def load_data(path):
     data = []
     for file in sorted(listdir(path)):
         img = imread(path + file, 0)
-        img = resize(img, (128,128), interpolation=INTER_CUBIC)
+        if img.shape[0] != 128:
+            img = resize(img, (128,128), interpolation=INTER_CUBIC)
         w, h = img.shape
         img = img.reshape((w,h,1))
         img = img.astype(np.float32) / 255
