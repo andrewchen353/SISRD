@@ -24,7 +24,10 @@ def createModel():
     bn2 = BatchNormalization(axis=3)(conv3)
     add1 = Add()([prelu1, bn2])
     conv4 = Conv2D(1, (3, 3), padding='same', activation='relu')(add1)
-    conv5 = Conv2D(1, (3, 3), padding='same', activation='relu')(conv4)
+    bn3 = BatchNormalization(axis=3)(conv4)
+    add2 = Add()([prelu1, bn3])
+    # conv5 = Conv2D(1, (3, 3), padding='same', activation='relu')(conv4)
+    conv5 = Conv2D(1, (3, 3), padding='same', activation='relu')(add2)
 
     model = Model(x_input, conv5)
 
