@@ -31,7 +31,7 @@ def save_images(path, imageNames, images):
 
 def main():
     test_64_path = "xray/test_images_64x64/"
-    test_128_path = "xray/test_images_128x128"
+    test_128_path = "xray/test_images_128x128/"
     train_64_path = "xray/train_images_64x64/"
     train_128_path = "xray/train_images_128x128/"
 
