@@ -51,9 +51,13 @@ def main():
         if sys.argv[2] == "--test":
             print("Saving model")
             nn.save(sys.argv[4])
+            print("Loading test images...")
             test_images_64 = load_images(test_64_path)
-            test_out_64 = nn.predict(test_images_64)
-            save_images("xray/test_images_128x128", test_images_64, test_out_128)
+            print("Predicting...")
+            test_out_128 = nn.predict(test_images_64)
+            print(test_out_128.shape)
+            print("Saving images...")
+            save_images(test_128_path, test_images_64, test_out_128)
         else:
             print("Saving model")
             nn.save(sys.argv[3])
@@ -64,6 +68,7 @@ def main():
         test_images_64 = load_images(test_64_path)
         print("Predicting...")
         test_out_128 = nn.predict(test_images_64)
+        print(test_out_128.shape)
         print("Saving images...")
         save_images(test_128_path, test_64_path, test_out_128)
 
