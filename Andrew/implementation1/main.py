@@ -2,7 +2,7 @@ import os
 import numpy as np
 import cv2
 import neural_net
-import sys
+import argparse
 
 
 def load_images(path):
@@ -34,42 +34,86 @@ def main():
     train_64_path = "xray/train_images_64x64/"
     train_128_path = "xray/train_images_128x128/"
 
-    if len(sys.argv) <= 4:
-        print("Usage: main.py <--train/--test> --model <model_name>")
-        exit(1)
-        
-    if sys.argv[1] == "--train":
-        print("Creating model...")
-        nn = neural_net.createModel()
-        print("Loading images...")
-        train_input = load_images(train_64_path)
-        print(train_input.shape)
-        train_output = load_images(train_128_path)
-        print(train_output.shape)
-        print("Training model...")
-        nn.fit(train_input, train_output, batch_size=128, epochs=10)
-        if sys.argv[2] == "--test":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--train", action="store true")
+    parser.add_argument("--test", action="store true")
+    parser.add_argument("--model", action="store true")
+    args = parser.parse_args()
+
+    if args.model:
+        if args.train:
+            print("Creating model...")
+            nn = neural_net.createModel()
+            print("Loading images...")
+            train_input = load_images(train_64_path)
+            print(train_input.shape)
+            train_output = load_images(train_128_path)
+            print(train_output.shape)
+            print("Training model...")
+            nn.fit(train_input, train_output, batch_size=128, epochs=10)
             print("Saving model")
-            nn.save(sys.argv[4])
+            nn.save(args.model)
+            if args.test:
+                print("Loading test images...")
+                test_images_64 = load_images(test_64_path)
+                print("Predicting...")
+                test_out_128 = nn.predict(test_images_64)
+                print(test_out_128.shape)
+                print("Saving images...")
+                save_images(test_128_path, test_64_path, test_out_128)
+        elif args.test:
+            print("Loading model...")
+            nn = neural_net.loadModel(args.model)
             print("Loading test images...")
             test_images_64 = load_images(test_64_path)
             print("Predicting...")
             test_out_128 = nn.predict(test_images_64)
             print(test_out_128.shape)
             print("Saving images...")
-            save_images(test_128_path, test_images_64, test_out_128)
+            save_images(test_128_path, test_64_path, test_out_128)
         else:
-            print("Saving model")
-            nn.save(sys.argv[3])
-    elif sys.argv[1] == "--test":
-        print("Loading model...")
-        nn = neural_net.loadModel(sys.argv[3])
-        print("Loading test images...")
-        test_images_64 = load_images(test_64_path)
-        print("Predicting...")
-        test_out_128 = nn.predict(test_images_64)
-        print(test_out_128.shape)
-        print("Saving images...")
-        save_images(test_128_path, test_64_path, test_out_128)
+            print("Usage: main.py <--train/--test> --model <model_name>")
+            exit(1)
+    else:
+        print("Usage: main.py <--train/--test> --model <model_name>")
+        exit(1)
+
+    # if len(sys.argv) <= 4:
+    #     print("Usage: main.py <--train/--test> --model <model_name>")
+    #     exit(1)
+        
+    # if sys.argv[1] == "--train":
+    #     print("Creating model...")
+    #     nn = neural_net.createModel()
+    #     print("Loading images...")
+    #     train_input = load_images(train_64_path)
+    #     print(train_input.shape)
+    #     train_output = load_images(train_128_path)
+    #     print(train_output.shape)
+    #     print("Training model...")
+    #     nn.fit(train_input, train_output, batch_size=128, epochs=10)
+    #     if sys.argv[2] == "--test":
+    #         print("Saving model")
+    #         nn.save(sys.argv[4])
+    #         print("Loading test images...")
+    #         test_images_64 = load_images(test_64_path)
+    #         print("Predicting...")
+    #         test_out_128 = nn.predict(test_images_64)
+    #         print(test_out_128.shape)
+    #         print("Saving images...")
+    #         save_images(test_128_path, test_64_path, test_out_128)
+    #     else:
+    #         print("Saving model")
+    #         nn.save(sys.argv[3])
+    # elif sys.argv[1] == "--test":
+    #     print("Loading model...")
+    #     nn = neural_net.loadModel(sys.argv[3])
+    #     print("Loading test images...")
+    #     test_images_64 = load_images(test_64_path)
+    #     print("Predicting...")
+    #     test_out_128 = nn.predict(test_images_64)
+    #     print(test_out_128.shape)
+    #     print("Saving images...")
+    #     save_images(test_128_path, test_64_path, test_out_128)
 
 main()
