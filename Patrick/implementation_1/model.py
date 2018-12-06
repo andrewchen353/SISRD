@@ -25,16 +25,16 @@ def generate_model():
     #bnconv2 = BatchNormalization(axis=3, name='bn_conv2')(conv2)
     rlconv2 = LeakyReLU(alpha=0.3, name='rl_conv2')(conv2)
 
-    conv3 = Conv2D(32, (3,3), use_bias=True, name='conv3')(rlconv2)
+    conv3 = Conv2D(64, (3,3), use_bias=True, name='conv3')(rlconv2)
     #bnconv3 = BatchNormalization(axis=3, name='bn_conv3')(conv3)
     rlconv3 = LeakyReLU(alpha=0.3, name='rl_conv3')(conv3)
 
-    deconv1 = Deconv2D(32, (3,3), use_bias=True, name='deconv1')(rlconv3)
+    deconv1 = Deconv2D(64, (3,3), use_bias=True, name='deconv1')(rlconv3)
     #bndeconv1 = BatchNormalization(axis=3, name='bn_deconv1')(deconv1)
     rldeconv1 = LeakyReLU(alpha=0.3, name='rl_deconv1')(deconv1)
     sbdeconv1 = Add()([rldeconv1, rlconv2])
 
-    deconv2 = Deconv2D(32, (5,5), output_padding=(1,1), use_bias=True, name='deconv2')(sbdeconv1)
+    deconv2 = Deconv2D(64, (5,5), use_bias=True, name='deconv2')(sbdeconv1)
     #bndeconv2 = BatchNormalization(axis=3, name='bn_deconv2')(deconv2)
     rldeconv2 = LeakyReLU(alpha=0.3, name='rl_deconv2')(deconv2)
     sbdeconv2 = Add()([rldeconv2, rlconv1])
