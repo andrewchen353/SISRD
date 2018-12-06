@@ -1,5 +1,5 @@
 import numpy as np
-from keras.layers import Add, Input, Conv2D, PReLU
+from keras.layers import Add, Input, Conv2D, PReLU, BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, Sequential, load_model
 
@@ -10,7 +10,7 @@ from keras.models import Model, Sequential, load_model
 ######################################################
 # Implementing model in
 # "Deep Learning for Single Image Super-Resolution:
-#  A Brief Review" Fig.5c
+#  A Brief Review" SRResNet - Fig.5c
 ######################################################
 
 def createModel():
