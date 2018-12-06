@@ -31,7 +31,7 @@ def save_images(path, imageNames, images):
 
 def main():
     test_64_path = "xray/test_images_64x64/"
-    test_128_path = "xray/test_images_128x128"
+    test_128_path = "xray/test_images_128x128/"
     train_64_path = "xray/train_images_64x64/"
     train_128_path = "xray/train_images_128x128/"
 
@@ -51,7 +51,7 @@ def main():
             train_output = load_images(train_128_path)
             print(train_output.shape)
             print("Training model...")
-            nn.fit(train_input, train_output, batch_size=128, epochs=10)
+            nn.fit(train_input, train_output, batch_size=128, epochs=20)
             print("Saving model")
             nn.save(args.model)
         if args.test:
