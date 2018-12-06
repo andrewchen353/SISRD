@@ -48,12 +48,15 @@ def main():
         print(train_output.shape)
         print("Training model...")
         nn.fit(train_input, train_output, batch_size=128, epochs=10)
-        print("Saving model")
-        nn.save(sys.argv[4])
         if sys.argv[2] == "--test":
+            print("Saving model")
+            nn.save(sys.argv[4])
             test_images_64 = load_images(test_64_path)
             test_out_64 = nn.predict(test_images_64)
             save_images("xray/test_images_128x128", test_images_64, test_out_128)
+        else:
+            print("Saving model")
+            nn.save(sys.argv[3])
     elif sys.argv[1] == "--test":
         print("Loading model...")
         nn = neural_net.loadModel(sys.argv[3])
