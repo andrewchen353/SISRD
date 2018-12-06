@@ -34,7 +34,7 @@ def main():
     train_64_path = "xray/train_images_64x64/"
     train_128_path = "xray/train_images_128x128/"
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) <= 4:
         print("Usage: main.py <--train/--test> --model <model_name>")
         exit(1)
         
@@ -49,7 +49,7 @@ def main():
         print("Training model...")
         nn.fit(train_input, train_output, batch_size=128, epochs=10)
         print("Saving model")
-        nn.save(sys.argv[3])
+        nn.save(sys.argv[4])
         if sys.argv[2] == "--test":
             test_images_64 = load_images(test_64_path)
             test_out_64 = nn.predict(test_images_64)
