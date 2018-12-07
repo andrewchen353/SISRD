@@ -36,7 +36,9 @@ def generate_model():
 
     subpix = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
-    y_output = subpix
+    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='relu', name='conv4')(subpix)
+
+    y_output = conv4
 
     model = Model(x_input, y_output)
     adam = Adam(lr=0.003)
