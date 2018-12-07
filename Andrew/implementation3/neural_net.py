@@ -26,7 +26,7 @@ def createModel():
     deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1)
     add2 = Add()([conv1, deconv2])
     # spc1 = SubpixelConv2D(add2.shape, scale=2)(add2)
-    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(spc1)
+    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
     spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
     model = Model(x_input, spc1)
@@ -41,7 +41,7 @@ def loadModel(name):
     # return load_model(name)
 
 def rmse(y_true, y_pred):
-    diff = K.square(y_pred - y_true)
+    diff = K.square(y_pred - y_true) * 255**2
     return K.sum(K.sqrt(K.sum(diff, axis=(2, 1)) / (W * H)))
 
 if __name__ == "__main__":

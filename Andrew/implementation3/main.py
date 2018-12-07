@@ -51,10 +51,18 @@ def main():
             train_output = load_images(train_128_path)
             print(train_output.shape)
             print("Training model...")
-            nn.fit(train_input, train_output, batch_size=128, epochs=25)
+            nn.fit(train_input, train_output, batch_size=128, epochs=20)
             print("Saving model")
             nn.save(args.model)
-        if args.test:
+            if args.test:
+                print("Loading test images...")
+                test_images_64 = load_images(test_64_path)
+                print("Predicting...")
+                test_out_128 = nn.predict(test_images_64)
+                print(test_out_128.shape)
+                print("Saving images...")
+                save_images(test_128_path, test_64_path, test_out_128)
+        elif args.test:
             print("Loading model...")
             nn = neural_net.loadModel(args.model)
             print("Loading test images...")
