@@ -37,7 +37,8 @@ def createModel():
     return model
 
 def loadModel(name):
-    return load_model(name)
+    return load_model(name, custom_objects={'rmse': rmse})
+    # return load_model(name)
 
 def rmse(y_true, y_pred):
     diff = K.square(y_pred - y_true)
