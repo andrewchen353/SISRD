@@ -2,6 +2,7 @@ import numpy as np
 from keras.layers import Add, Input, Conv2D, PReLU, BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, Sequential, load_model
+from keras import backend as K
 
 ######################################################
 # By default keras is using TensorFlow as a backend
@@ -41,5 +42,6 @@ def createModel():
 def loadModel(name):
     return load_model(name)
 
-def rmse(Y_pred, Y_true):
-    return np.sum(np.sqrt(np.sum(np.sum((Y_pred - Y_true)**2, axis=1), axis=2)/(W * H)))
+def rmse(y_true, y_pred):
+    diff = K.square(y_pred - y_true)
+    return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (W * H)))

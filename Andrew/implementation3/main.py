@@ -10,8 +10,8 @@ def load_images(path):
     for file in sorted(os.listdir(path)):
         img = cv2.imread(path + file, 0)
         w, h = img.shape
-        if w == 64 and h == 64:
-            img = cv2.resize(img, (128,128), interpolation=cv2.INTER_CUBIC)
+        # if w == 64 and h == 64:
+        #     img = cv2.resize(img, (128,128), interpolation=cv2.INTER_CUBIC)
         w, h = img.shape
         img = img.reshape((w,h,1))
         img = img.astype(np.float32) / 255

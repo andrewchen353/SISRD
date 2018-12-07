@@ -1,7 +1,9 @@
 import numpy as np
-from keras.layers import Add, Input, Conv2D, PReLU, BatchNormalization
+from subpixel import SubpixelConv2D
+from keras.layers import Add, Input, Conv2D, Deconv2D
 from keras.optimizers import Adam
 from keras.models import Model, Sequential, load_model
+from keras import backend as K
 
 ######################################################
 # By default keras is using TensorFlow as a backend
@@ -9,28 +11,25 @@ from keras.models import Model, Sequential, load_model
 
 ######################################################
 # Implementing model in
-# "Deep Learning for Single Image Super-Resolution:
-#  A Brief Review" SRResNet - Fig.5c
+# https://github.com/titu1994/Image-Super-Resolution
+# Denoiseing (Auto Encoder) Super Resolution CNN (DSRCNN)
 ######################################################
 W = 128
 H = 128
 
 def createModel():
-    x_input = Input((128, 128, 1))
-    conv1 = Conv2D(1, (3, 3), padding='same', activation='relu')(x_input)
-    prelu1 = PReLU(alpha_initializer='zeros')(conv1)
-    conv2 = Conv2D(16, (3, 3), padding='same', activation='relu')(prelu1)
-    bn1 = BatchNormalization(axis=3)(conv2)
-    prelu2 = PReLU(alpha_initializer='zeros')(bn1)
-    conv3 = Conv2D(16, (3, 3), padding='same', activation='relu')(prelu2)
-    bn2 = BatchNormalization(axis=3)(conv3)
-    add1 = Add()([prelu1, bn2])
-    conv4 = Conv2D(1, (3, 3), padding='same', activation='relu')(add1)
-    bn3 = BatchNormalization(axis=3)(conv4)
-    add2 = Add()([prelu1, bn3])
-    conv5 = Conv2D(1, (3, 3), padding='same', activation='relu')(add2)
+    x_input = Input((64, 64, 1))
+    conv1 = Conv2D(64, (3, 3), padding='same', activation='relu')(x_input)
+    conv2 = Conv2D(64, (3, 3), padding='same', activation='relu')(conv1)
+    deconv1 = Deconv2D(64, (3, 3), padding='same')(conv2)
+    add1 = Add()([conv2, deconv1])
+    deconv2 = Deconv2D(64, (3, 3), padding='same')(add1)
+    add2 = Add()([conv1, deconv2])
+    spc1 = SubpixelConv2D(add2.shape, scale=2)(add2)
+    conv3 = Conv2D(1, (3, 3), padding='same', activation='relu')(spc1)
+    # spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
-    model = Model(x_input, conv5)
+    model = Model(x_input, spc1)
 
     # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy']) #v1-3
     model.compile(loss=rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
@@ -40,5 +39,9 @@ def createModel():
 def loadModel(name):
     return load_model(name)
 
-def rmse(Y_pred, Y_true):
-    return np.sum(np.sqrt(np.sum(np.sum((Y_pred - Y_true)**2, axis=1), axis=2)/(W * H)))
+def rmse(y_true, y_pred):
+    diff = K.square(y_pred - y_true)
+    return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (W * H)))
+
+if __name__ == "__main__":
+    model = createModel()
