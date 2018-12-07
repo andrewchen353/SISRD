@@ -35,7 +35,7 @@ def createModel():
     model = Model(x_input, conv5)
 
     # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy']) #v1-3
-    model.compile(loss=rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
+    model.compile(loss=rmse, optimizer=Adam(lr=0.001), metrics=['accuracy']) # v4
 
     return model
 
