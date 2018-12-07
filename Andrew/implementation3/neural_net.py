@@ -1,4 +1,5 @@
 import numpy as np
+from subpixel import SubpixelConv2D
 from keras.layers import Add, Input, Conv2D, Deconv2D
 from keras.optimizers import Adam
 from keras.models import Model, Sequential, load_model
@@ -24,9 +25,11 @@ def createModel():
     add1 = Add()([conv2, deconv1])
     deconv2 = Deconv2D(64, (3, 3), padding='same')(add1)
     add2 = Add()([conv1, deconv2])
-    conv3 = Conv2D(1, (3, 3), padding='same', activation='relu')(add2)
+    spc1 = SubpixelConv2D(add2.shape, scale=2)(add2)
+    conv3 = Conv2D(1, (3, 3), padding='same', activation='relu')(spc1)
+    # spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
-    model = Model(x_input, conv5)
+    model = Model(x_input, spc1)
 
     # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy']) #v1-3
     model.compile(loss=rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
@@ -39,3 +42,6 @@ def loadModel(name):
 def rmse(y_true, y_pred):
     diff = K.square(y_pred - y_true)
     return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (W * H)))
+
+if __name__ == "__main__":
+    model = createModel()
