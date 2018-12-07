@@ -25,9 +25,9 @@ def createModel():
     add1 = Add()([conv2, deconv1])
     deconv2 = Deconv2D(64, (3, 3), padding='same')(add1)
     add2 = Add()([conv1, deconv2])
-    spc1 = SubpixelConv2D(add2.shape, scale=2)(add2)
-    conv3 = Conv2D(1, (3, 3), padding='same', activation='relu')(spc1)
-    # spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
+    # spc1 = SubpixelConv2D(add2.shape, scale=2)(add2)
+    conv3 = Conv2D(4, (3, 3), padding='same', activation='relu')(spc1)
+    spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
     model = Model(x_input, spc1)
 
