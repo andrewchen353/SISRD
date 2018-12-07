@@ -6,6 +6,8 @@ from keras.callbacks import Callback
 from keras import backend as K
 import h5py
 
+from subpixel import SubpixelConv2D
+
 _EPSILON = K.epsilon()
 _W = 128
 _H = 128
@@ -15,9 +17,9 @@ _H = 128
 ######################################################
 
 def generate_model():
-    x_input = Input((128, 128, 1))
+    x_input = Input((64, 64, 1))
 
-    conv1 = Conv2D(64, (9,9), padding='same', use_bias=True, name='conv1')(x_input)
+    conv1 = Conv2D(64, (7,7), padding='same', use_bias=True, name='conv1')(x_input)
     #bnconv1 = BatchNormalization(axis=3, name='bn_conv1')(conv1)
     rlconv1 = LeakyReLU(alpha=0.3, name='rl_conv1')(conv1)
 
@@ -39,8 +41,8 @@ def generate_model():
     rldeconv2 = LeakyReLU(alpha=0.3, name='rl_deconv2')(deconv2)
     sbdeconv2 = Add()([rldeconv2, rlconv1])
 
-    conv4 = Conv2D(1, (5,5), use_bias=True, activation='relu', name='conv4')(sbdeconv2)
-    y_output = conv4 #UpSampling2D(size=(2,2), interpolation='bilinear')(conv4)
+    conv4 = Conv2D(4, (3,3), padding='same', use_bias=True, activation='relu', name='conv4')(sbdeconv2)
+    y_output = SubpixelConv2D(conv4.shape, scale=2)(conv4)
 
     model = Model(x_input, y_output)
     adam = Adam(lr=0.001)

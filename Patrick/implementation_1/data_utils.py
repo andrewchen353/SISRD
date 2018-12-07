@@ -4,13 +4,16 @@ from os import listdir
 
 def load_data(path):
     data = []
+    print(path)
     for file in sorted(listdir(path)):
         img = imread(path + file, 0)
-        img = resize(img, (128,128), interpolation=INTER_CUBIC)
+        # if img.shape[0] != 128:
+        #     img = resize(img, (128,128), interpolation=INTER_CUBIC)
         w, h = img.shape
         img = img.reshape((w,h,1))
         img = img.astype(np.float32) / 255
         data.append(img)
+    print(len(data))
     return np.array(data)
 
 def save_images(path, imageNames, images):
