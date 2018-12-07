@@ -37,4 +37,4 @@ def loadModel(name):
 
 def rmse(y_true, y_pred):
     diff = K.square(y_pred - y_true)
-    return K.sum(K.sqrt(K.sum(K.sum(diff, axis=2), axis=1) / (W * H)))
+    return K.sum(K.sqrt(K.sum(diff, axis=(2, 1)) / (W * H)))
