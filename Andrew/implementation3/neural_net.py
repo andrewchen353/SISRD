@@ -32,7 +32,7 @@ def createModel():
     model = Model(x_input, spc1)
 
     # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy']) #v1-3
-    model.compile(loss=rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
+    model.compile(loss=rmse, optimizer=Adam(lr=0.003), metrics=['accuracy'])
 
     return model
 
@@ -42,7 +42,7 @@ def loadModel(name):
 
 def rmse(y_true, y_pred):
     diff = K.square(y_pred - y_true)
-    return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (W * H)))
+    return K.sum(K.sqrt(K.sum(diff, axis=(2, 1)) / (W * H)))
 
 if __name__ == "__main__":
     model = createModel()
