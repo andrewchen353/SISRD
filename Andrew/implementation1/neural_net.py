@@ -2,6 +2,7 @@ import numpy as np
 from keras.layers import Input, MaxPooling2D, UpSampling2D, Conv2D, Flatten, Dense
 from keras.optimizers import Adam
 from keras.models import Model, Sequential, load_model
+from keras import backend as K
 
 ######################################################
 # By default keras is using TensorFlow as a backend
@@ -13,22 +14,6 @@ from keras.models import Model, Sequential, load_model
 ######################################################
 
 def createModel():
-    # model = Sequential() #input_shape=(1, 64, 64))
-    
-    # model.add(Conv2D(64, (2, 2), padding='same', activation='relu', input_shape=(1, 64, 64)))
-    # model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    # model.add(Conv2D(64, (2, 2), padding='same', activation='relu'))
-    # model.add(MaxPooling2D(pool_size=(2, 2)))#, strides=(2, 2)))
-
-    # model.add(Conv2D(64, (2, 2), padding='same', activation='relu'))
-    # model.add(UpSampling2D(size=(2, 2)))
-
-    # model.add(Conv2D(64, (2, 2), padding='same', activation='relu'))
-    # model.add(UpSampling2D(size=(2, 2)))
-
-    # model.add(Conv2D(1, (2, 2), padding='same', activation='relu'))
-
     x_input = Input((128, 128, 1))
     conv1 = Conv2D(64, (7, 7), padding='same', activation='relu')(x_input)
     mp1 = MaxPooling2D(pool_size=(2, 2))(conv1)
@@ -50,5 +35,6 @@ def createModel():
 def loadModel(name):
     return load_model(name)
 
-def rmse(Y_pred, Y_true):
-    return np.sum(np.sqrt(np.sum(np.sum((Y_pred - Y_true)**2, axis=1), axis=2)/(W * H)))
+def rmse(y_true, y_pred):
+    diff = K.square(y_pred - y_true)
+    return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (W * H)))
