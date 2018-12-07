@@ -28,7 +28,7 @@ def generate_model():
     y_output = subpix
 
     model = Model(x_input, y_output)
-    adam = Adam(lr=0.001)
+    adam = Adam(lr=0.003)
     model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
 

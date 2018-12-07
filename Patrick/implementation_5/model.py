@@ -32,14 +32,14 @@ def generate_model():
 
     add2 = Add()([deconv2, conv1])
 
-    conv3 = conv3 = Conv2D(4 , (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(add2)
+    conv3 = Conv2D(4 , (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(add2)
 
     subpix = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
     y_output = subpix
 
     model = Model(x_input, y_output)
-    adam = Adam(lr=0.001)
+    adam = Adam(lr=0.003)
     model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
 
