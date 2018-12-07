@@ -25,14 +25,13 @@ def createModel():
     add1 = Add()([conv2, deconv1])
     deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1)
     add2 = Add()([conv1, deconv2])
-    # spc1 = SubpixelConv2D(add2.shape, scale=2)(add2)
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
     spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
     model = Model(x_input, spc1)
 
-    # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy']) #v1-3
-    model.compile(loss=rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
+    # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
+    model.compile(loss=rmse, optimizer=Adam(lr=0.001), metrics=['accuracy']) # v1 -> lr=0.003, v2 -> lr=0.001
 
     return model
 
