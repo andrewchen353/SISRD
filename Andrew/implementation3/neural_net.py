@@ -25,11 +25,10 @@ def createModel():
     conv3 = Conv2D(16, (3, 3), padding='same', activation='relu')(prelu2)
     bn2 = BatchNormalization(axis=3)(conv3)
     add1 = Add()([prelu1, bn2])
-    conv4 = Conv2D(1, (3, 3), padding='same', activation='relu')(add1) # v1, 10 epochs
-    # conv5 = Conv2D(1, (3, 3), padding='same', activation='relu')(conv4) # v1, 10 epochs; v2, 40 epochs
-    bn3 = BatchNormalization(axis=3)(conv4) # v3, 40 epochs
-    add2 = Add()([prelu1, bn3]) # v3, 40 epochs
-    conv5 = Conv2D(1, (3, 3), padding='same', activation='relu')(add2) # v3, 40 epochs
+    conv4 = Conv2D(1, (3, 3), padding='same', activation='relu')(add1)
+    bn3 = BatchNormalization(axis=3)(conv4)
+    add2 = Add()([prelu1, bn3])
+    conv5 = Conv2D(1, (3, 3), padding='same', activation='relu')(add2)
 
     model = Model(x_input, conv5)
 
