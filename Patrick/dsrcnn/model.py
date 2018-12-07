@@ -41,12 +41,12 @@ def generate_model():
     y_output = conv4
 
     model = Model(x_input, y_output)
-    adam = Adam(lr=0.003)
+    adam = Adam(lr=0.001)
     model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
 
 def rmse(y_true, y_pred):
-    diff = K.square(255 * y_pred - 255 * y_true)
+    diff = K.square(255 * (y_pred - y_true))
     return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
 
 def loadModel(modelName):
