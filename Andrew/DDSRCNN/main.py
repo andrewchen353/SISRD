@@ -60,6 +60,8 @@ def main():
                 print("Predicting...")
                 test_out_128 = nn.predict(test_images_64)
                 print(test_out_128.shape)
+                if not os.path.exists(test_128_path):
+                    os.makedirs(test_128_path)
                 print("Saving images...")
                 save_images(test_128_path, test_64_path, test_out_128)
         elif args.test:
