@@ -42,9 +42,13 @@ def createModel():
 
     model = Model(x_input, conv5)
 
-    model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
+    # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
+    model.compile(loss=rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
 
     return model
 
 def loadModel(name):
     return load_model(name)
+
+def rmse(Y_pred, Y_true):
+    return np.sum(np.sqrt(np.sum(np.sum((Y_pred - Y_true)**2, axis=1), axis=2)/(W * H)))
