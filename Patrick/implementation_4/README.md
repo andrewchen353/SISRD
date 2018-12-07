@@ -1,3 +1,3 @@
-# Implementation 0
+# Implementation 4
 
-Simple neural network, convolution and then deconvolution.
+Expanded Super Resolution CNN (ESRCNN)

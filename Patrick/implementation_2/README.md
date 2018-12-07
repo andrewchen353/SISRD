@@ -1,3 +1,3 @@
-# Implementation 0
+# Implementation 2
 
-Simple neural network, convolution and then deconvolution.
+SRCNN

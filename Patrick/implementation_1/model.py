@@ -52,7 +52,7 @@ def generate_model():
 
 def rmse(y_true, y_pred):
     diff = K.square(y_pred - y_true)
-    return K.sum(K.sqrt(K.sum(K.sum(diff, axis=1), axis=2) / (_W * _H)))
+    return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
 
 def loadModel(modelName):
     return load_model(modelName, custom_objects={'rmse': rmse})

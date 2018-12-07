@@ -1,3 +1,3 @@
-# Implementation 0
+# Implementation 5
 
-Simple neural network, convolution and then deconvolution.
+Denoiseing (Auto Encoder) Super Resolution CNN (DSRCNN)
