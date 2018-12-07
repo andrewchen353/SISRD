@@ -19,14 +19,14 @@ H = 128
 
 def createModel():
     x_input = Input((64, 64, 1))
-    conv1 = Conv2D(64, (3, 3), padding='same', activation='relu')(x_input)
-    conv2 = Conv2D(64, (3, 3), padding='same', activation='relu')(conv1)
-    deconv1 = Deconv2D(64, (3, 3), padding='same')(conv2)
+    conv1 = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
+    conv2 = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(conv1)
+    deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(conv2)
     add1 = Add()([conv2, deconv1])
-    deconv2 = Deconv2D(64, (3, 3), padding='same')(add1)
+    deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1)
     add2 = Add()([conv1, deconv2])
     # spc1 = SubpixelConv2D(add2.shape, scale=2)(add2)
-    conv3 = Conv2D(4, (3, 3), padding='same', activation='relu')(spc1)
+    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(spc1)
     spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
     model = Model(x_input, spc1)
