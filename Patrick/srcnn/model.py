@@ -30,7 +30,7 @@ def generate_model():
     return model
 
 def rmse(y_true, y_pred):
-    diff = K.square(y_pred - y_true)
+    diff = K.square(255 * (y_pred - y_true))
     return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
 
 def loadModel(modelName):

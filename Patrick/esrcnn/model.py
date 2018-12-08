@@ -22,15 +22,16 @@ def generate_model():
 
     conv1 = Conv2D(64, (5,5), padding='same', use_bias=True, activation='relu', name='conv1')(x_input)
 
-    mid1 = Conv2D(32, (3,3), padding='same', use_bias=True, activation='relu', name='mid1')(conv1)
+    mid1 = Conv2D(32, (5,5), padding='same', use_bias=True, activation='relu', name='mid1')(conv1)
     mid2 = Conv2D(32, (3,3), padding='same', use_bias=True, activation='relu', name='mid2')(conv1)
-    mid3 = Conv2D(32, (3,3), padding='same', use_bias=True, activation='relu', name='mid3')(conv1)
+    mid3 = Conv2D(32, (1,1), padding='same', use_bias=True, activation='relu', name='mid3')(conv1)
 
-    avg = Average()([mid1, mid2, mid3])
-    conv3 = Conv2D(4 , (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(avg)
+    merge = Add()([mid1, mid2, mid3])
+    conv3 = Conv2D(16 , (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(merge)
     subpix = SubpixelConv2D(conv3.shape, scale=2)(conv3)
+    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='relu', name='conv4')(subpix)
 
-    y_output = subpix
+    y_output = conv4
 
     model = Model(x_input, y_output)
     adam = Adam(lr=0.001)
@@ -38,7 +39,7 @@ def generate_model():
     return model
 
 def rmse(y_true, y_pred):
-    diff = K.square(y_pred - y_true)
+    diff = K.square(255 * (y_pred - y_true))
     return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
 
 def loadModel(modelName):
