@@ -1,4 +1,4 @@
-Model Name,Training Loss,Validation Loss,Actual Performance,Number of Epochs Trained, Learning Rate, Batch Size, Validation Split, Loss
+Model Name,Training Loss,Validation Loss,Actual Performance,Number of Epochs, Learning Rate, Batch Size, Validation Split, Loss
 srcnn_v3,-,-,9073.98577088845,20,-,-,-,rmse
 subpixel_v1,-,-,8991.25640058194,20,-,-,-,rmse
 dsrcnn_v2,-,-,8991.753261832257,15,-,-,-,rmse
