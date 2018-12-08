@@ -6,13 +6,12 @@ import loss
 import argparse
 from keras.models import load_model
 
-def load_images(path):
+def load_images(path, scale=0):
     data = []
     for file in sorted(os.listdir(path)):
         img = cv2.imread(path + file, 0)
-        w, h = img.shape
-        # if w == 64 and h == 64:
-        #     img = cv2.resize(img, (128,128), interpolation=cv2.INTER_CUBIC)
+        if scale:
+            img = cv2.resize(img, (128,128), interpolation=cv2.INTER_CUBIC)
         w, h = img.shape
         img = img.reshape((w,h,1))
         img = img.astype(np.float32) / 255
@@ -62,7 +61,8 @@ def main():
                 print(args.network, "is not a valid model")
                 exit(1)
             print("Loading images...")
-            train_input = load_images(train_64_path)
+            scale = args.network == "CNNDAE" or args.network == "SRResNet"
+            train_input = load_images(train_64_path, scale)
             print(train_input.shape)
             train_output = load_images(train_128_path)
             print(train_output.shape)
@@ -70,24 +70,17 @@ def main():
             nn.fit(train_input, train_output, validation_split=0.1, batch_size=128, epochs=20)
             print("Saving model")
             nn.save(args.model)
-            if args.test:
-                print("Loading test images...")
-                test_images_64 = load_images(test_64_path)
-                print("Predicting...")
-                test_out_128 = nn.predict(test_images_64)
-                print(test_out_128.shape)
-                if not os.path.exists(test_128_path):
-                    os.makedirs(test_128_path)
-                print("Saving images...")
-                save_images(test_128_path, test_64_path, test_out_128)
-        elif args.test:
-            print("Loading model...")
-            nn = loadModel(args.model)
+        if args.test:
+            if not args.train:
+                print("Loading model...")
+                nn = loadModel(args.model)
             print("Loading test images...")
             test_images_64 = load_images(test_64_path)
             print("Predicting...")
             test_out_128 = nn.predict(test_images_64)
             print(test_out_128.shape)
+            if not os.path.exists(test_128_path):
+                os.makedirs(test_128_path)
             print("Saving images...")
             save_images(test_128_path, test_64_path, test_out_128)
         else:
