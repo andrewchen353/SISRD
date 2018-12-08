@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import cv2
-import CNNDAE, CNNDAE_v3, DDSRCNN, DSRCNN, SRResNet, SRResNet_v4
+import CNNDAE, DDSRCNN, DSRCNN, SRResNet
 import loss
 import argparse
 from keras.models import load_model
@@ -51,16 +51,12 @@ def main():
             print("Creating model...")
             if args.network == "CNNDAE":
                 nn = CNNDAE.createModel()
-            elif args.network == "CNNDAE_v3":
-                nn = CNNDAE_v3.createModel()
             elif args.network == "DDSRCNN":
                 nn = DDSRCNN.createModel()
             elif args.network == "DSRCNN":
                 nn = DSRCNN.createModel()
             elif args.network == "SRResNet":
                 nn = SRResNet.createModel()
-            elif args.network == "SRResNet_v4":
-                nn = SRResNet_v4.createModel()
             else:
                 print(args.network, "is not a valid model")
                 exit(1)
