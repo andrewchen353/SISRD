@@ -24,9 +24,10 @@ def createModel():
     spc1 = SubpixelConv2D(conv3.shape, name='spc1', scale=2)(conv3)
     conv4 = Conv2D(4, (7, 7), padding='same', activation='relu')(spc1)
     spc2 = SubpixelConv2D(conv4.shape, name='spc2', scale=2)(conv4)
-    conv5 = Conv2D(1, (5, 5), padding='same', activation='relu')(spc2)
+    conv5 = Conv2D(4, (5, 5), padding='same', activation='relu')(spc2)
+    spc3 = SubpixelConv2D(conv4.shape, name='spc3', scale=2)(conv5)
 
-    model = Model(x_input, conv5)
+    model = Model(x_input, spc3)
 
     # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy'])
     model.compile(loss=loss.rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
