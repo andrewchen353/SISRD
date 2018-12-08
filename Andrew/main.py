@@ -1,12 +1,17 @@
 import os
 import numpy as np
 import cv2
-import CNNDAE, DDSRCNN, DSRCNN, SRResNet
+import neural_net
 import loss
 import argparse
 from keras.models import load_model
 
-def load_images(path, scale=0):
+test_64_path = "xray/test_images_64x64/"
+test_128_path = "xray/test_images_128x128/"
+train_64_path = "xray/train_images_64x64/"
+train_128_path = "xray/train_images_128x128/"
+
+def loadImages(path, scale=0):
     data = []
     for file in sorted(os.listdir(path)):
         img = cv2.imread(path + file, 0)
@@ -18,7 +23,7 @@ def load_images(path, scale=0):
         data.append(img)
     return np.array(data)
 
-def save_images(path, imageNames, images):
+def saveImages(path, imageNames, images):
     names = sorted(os.listdir(imageNames))
     for file, i in zip(names, np.arange(len(names))):
         img = images[i]
@@ -29,42 +34,38 @@ def save_images(path, imageNames, images):
         cv2.imwrite(path + file, img)
     return
 
-def loadModel(name):
-    return load_model(name, custom_objects={'rmse': loss.rmse})
-    # return load_model(name)
+def verifyModelName(modelName):
+    if not modelName or ".h5" in modelName or "_v" not in modelName:
+        print("Invalid model name, expected format: \'<modelName>_v<#>\'")
+        exit(1)
+
+def createDir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 def main():
-    test_64_path = "xray/test_images_64x64/"
-    test_128_path = "xray/test_images_128x128/"
-    train_64_path = "xray/train_images_64x64/"
-    train_128_path = "xray/train_images_128x128/"
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--train", action="store_true")
     parser.add_argument("--test", action="store_true")
-    parser.add_argument("--network")
+    # parser.add_argument("--network")
     parser.add_argument("--model")
     args = parser.parse_args()
 
     if args.model:
-        if args.train and args.network:
-            print("Creating model...")
-            if args.network == "CNNDAE":
-                nn = CNNDAE.createModel()
-            elif args.network == "DDSRCNN":
-                nn = DDSRCNN.createModel()
-            elif args.network == "DSRCNN":
-                nn = DSRCNN.createModel()
-            elif args.network == "SRResNet":
-                nn = SRResNet.createModel()
-            else:
-                print(args.network, "is not a valid model")
+        verifyModelName(args.model)
+        network = args.model.split('_')[0]
+
+        if args.train:
+            if network not in neural_net.lookup:
+                print(network, "is not a valid model")
                 exit(1)
+            print("Creating model...")
+            nn = neural_net.lookup[network]
             print("Loading images...")
-            scale = args.network == "CNNDAE" or args.network == "SRResNet"
-            train_input = load_images(train_64_path, scale)
+            scale = network == "CNNDAE" or network == "SRResNet"
+            train_input = loadImages(train_64_path, scale)
             print(train_input.shape)
-            train_output = load_images(train_128_path)
+            train_output = loadImages(train_128_path)
             print(train_output.shape)
             print("Training model...")
             nn.fit(train_input, train_output, validation_split=0.1, batch_size=128, epochs=20)
@@ -73,21 +74,20 @@ def main():
         if args.test:
             if not args.train:
                 print("Loading model...")
-                nn = loadModel(args.model)
+                nn = neural_net.loadModel(args.model)
             print("Loading test images...")
-            test_images_64 = load_images(test_64_path)
+            test_images_64 = loadImages(test_64_path)
             print("Predicting...")
             test_out_128 = nn.predict(test_images_64)
             print(test_out_128.shape)
-            if not os.path.exists(test_128_path):
-                os.makedirs(test_128_path)
+            createDir(test_128_path)
             print("Saving images...")
-            save_images(test_128_path, test_64_path, test_out_128)
+            saveImages(test_128_path, test_64_path, test_out_128)
         else:
             print("Usage: main.py <--train/--test> --model <model_name>")
             exit(1)
     else:
-        print("Usage: main.py <--train/--test> --model <model_name>")
+        print("Usage: main.py <--train/--test> --model <model_name>_v#")
         exit(1)
 
 main()
