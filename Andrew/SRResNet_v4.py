@@ -1,5 +1,6 @@
 import numpy as np
 import loss
+from subpixel import SubpixelConv2D
 from keras.layers import Add, Input, Conv2D, PReLU, BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, load_model
