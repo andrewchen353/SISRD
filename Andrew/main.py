@@ -98,45 +98,6 @@ def main():
         print("Loading model...")
         nn = neural_net.loadModel(models_path + args.model)
         test(nn, test_64_path, test_128_path)
-
-    # if args.model:
-    #     verifyModelName(args.model)
-    #     network = args.model.split('_')[0]
-
-    #     if args.train:
-    #         verifyNetwork(network)
-    #         nn = train(network, args.model, train_64_path, train_128_path)
-    #         fit = input("Would you like to test the model? y/n")
-    #         if fit == 'y':
-    #             test(nn, test_64_path, test_128_path)
-    #         # print("Creating model...")
-    #         # nn = neural_net.lookup[network]()
-    #         # print("Loading images...")
-    #         # scale = network == "CNNDAE" or network == "SRResNet"
-    #         # train_input = loadImages(train_64_path, scale)
-    #         # print(train_input.shape)
-    #         # train_output = loadImages(train_128_path)
-    #         # print(train_output.shape)
-    #         # print("Training model...")
-    #         # nn.fit(train_input, train_output, validation_split=0.1, batch_size=128, epochs=20)
-    #         # print("Saving model")
-    #         # nn.save(models_path + args.model)
-    #     else args.test:
-    #         if not args.train:
-    #             print("Loading model...")
-    #             nn = neural_net.loadModel(models_path + args.model)
-    #         test(nn, test_64_path, test_128_path)
-    #         # print("Loading test images...")
-    #         # test_images_64 = loadImages(test_64_path)
-    #         # print("Predicting...")
-    #         # test_out_128 = nn.predict(test_images_64)
-    #         # print(test_out_128.shape)
-    #         # createDir(test_128_path)
-    #         # print("Saving images...")
-    #         # saveImages(test_128_path, test_64_path, test_out_128)
-    #     else:
-    #         print("Usage: main.py <--train/--test> --model <model_name>")
-    #         exit(1)
     else:
         print("Usage: main.py <--train/--test> --model <model_name>_v#")
         exit(1)
