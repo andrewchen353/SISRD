@@ -21,17 +21,24 @@ def train(modelName):
         print('This model has already been created, plus increase version number')
         exit(1)
     nn = model.lookUp[key]
+    print('Loading training input images from: ' + training_input_dir)
     training_input = data_utils.load_data(training_input_dir)
+    print('Loading training output images from: ' + training_output_dir)
     training_output = data_utils.load_data(training_output_dir)
+    print('Beginning training...')
     nn.fit(training_input, training_output, batch_size=64, epochs=20, validation_split=0.1)
+    print('Saving model to: ' + models_path + modelName + '.h5')
     model.saveModel(nn, models_path + modelName + '.h5')
     return nn
 
 def test(nn, storePath):
+    print('Loading test input images: ' + test_input_dir)
     test_input = data_utils.load_data(test_input_dir)
+    print('Beginning to predict...')
     test_output = nn.predict(test_input)
     if not exists(output_path + storePath):
         makedirs(output_path + storePath)
+    print('Saving test output images to: ' + output_path + storePath)
     data_utils.save_images(output_path + storePath, test_input_dir, test_output)
 
 def checkValid(modelName):
