@@ -12,13 +12,13 @@ test_input_dir = 'xray_images/test_images_64x64/'
 models_path = 'Patrick/models/'
 output_path = 'outputs/'
 
-def train(modelName):
+def train(modelName, epochs):
     key = modelName.split('_')[0] 
     if key not in model.lookUp:
         print('Invalid model given')
         exit(1)
     if exists(models_path + modelName + '.h5'):
-        print('This model has already been created, plus increase version number')
+        print('This model has already been created, increase version number')
         exit(1)
     nn = model.lookUp[key]()
     print('Loading training input images from: ' + training_input_dir)
@@ -26,7 +26,7 @@ def train(modelName):
     print('Loading training output images from: ' + training_output_dir)
     training_output = data_utils.load_data(training_output_dir)
     print('Beginning training...')
-    nn.fit(training_input, training_output, batch_size=128, epochs=20, validation_split=0.1)
+    nn.fit(training_input, training_output, batch_size=128, epochs=epochs, validation_split=0.1)
     print('Saving model to: ' + models_path + modelName + '.h5')
     model.saveModel(nn, models_path + modelName + '.h5')
     return nn
@@ -49,7 +49,7 @@ def checkValid(modelName):
 
 def checkCurrDirectory():
     if not exists(training_input_dir):
-        print('Woah, you\'re in the wrong directory, go to the SISRD/')
+        print('Woah, you\'re in the wrong directory, go to SISRD/')
         exit(1)
 
 def main():
@@ -57,12 +57,13 @@ def main():
     parser.add_argument('--train', action='store_true', help='bool determining whether to train or not')
     parser.add_argument('--test', action='store_true', help='bool determining whether to test or not')
     parser.add_argument('--model', help='model name, to be of the form \'srcnn_v2\' with model type and version')
+    parser.add_argument('--epochs', help='number of epochs to train with', default=20)
     args = parser.parse_args()
     checkValid(args.model)
     checkCurrDirectory()
 
     if args.train and args.model:
-        nn = train(args.model)
+        nn = train(args.model, args.epochs)
         test_or_not = input("Do you want to test with the test images too? ")
         if test_or_not == 'yes':
             test(nn, args.model + '/')
