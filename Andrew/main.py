@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import cv2
-import CNNDAE, DDSRCNN, DSRCNN, SRREesNet
+import CNNDAE, DDSRCNN, DSRCNN, SRResNet
 import loss
 import argparse
 from keras.models import load_model
