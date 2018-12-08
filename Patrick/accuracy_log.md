@@ -1,7 +1,0 @@
-# Accuracy of current models
-
-Model Name  |   Training Loss   |   Validation Loss |   Actual Performance  | Number of Epochs Trained
--------------------------------------------------------------------------------------------------------
-srcnn_v3    |         -         |         -         |   9073.98577088845    |   20
-subpixel_v1 |         -         |         -         |   8991.25640058194    |   20
-dsrcnn_v2   |         -         |         -         |   8991.753261832257   |   15
