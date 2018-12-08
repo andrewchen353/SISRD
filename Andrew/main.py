@@ -34,6 +34,20 @@ def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
     # return load_model(name)
 
+def checkDir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+# def test(model, inPath, outPath):
+#     print("Loading test images...")
+#     test_images_64 = load_images(inPath)
+#     print("Predicting...")
+#     test_out_128 = nn.predict(test_images_64)
+#     print(test_out_128.shape)
+#     checkDir(outPath)
+#     print("Saving images...")
+#     save_images(outPath, inPath, test_out_128)
+
 def main():
     test_64_path = "xray/test_images_64x64/"
     test_128_path = "xray/test_images_128x128/"
@@ -70,26 +84,40 @@ def main():
             nn.fit(train_input, train_output, validation_split=0.1, batch_size=128, epochs=20)
             print("Saving model")
             nn.save(args.model)
-            if args.test:
-                print("Loading test images...")
-                test_images_64 = load_images(test_64_path)
-                print("Predicting...")
-                test_out_128 = nn.predict(test_images_64)
-                print(test_out_128.shape)
-                if not os.path.exists(test_128_path):
-                    os.makedirs(test_128_path)
-                print("Saving images...")
-                save_images(test_128_path, test_64_path, test_out_128)
-        elif args.test:
-            print("Loading model...")
-            nn = loadModel(args.model)
+        if args.test:
+            if not args.train:
+                print("Loading model...")
+                nn = loadModel(args.model)
             print("Loading test images...")
             test_images_64 = load_images(test_64_path)
             print("Predicting...")
             test_out_128 = nn.predict(test_images_64)
             print(test_out_128.shape)
+            checkDir(test_128_path)
             print("Saving images...")
             save_images(test_128_path, test_64_path, test_out_128)
+            # if args.test:
+            #     test(nn, test_64_path, test_128_path)
+                # print("Loading test images...")
+                # test_images_64 = load_images(test_64_path)
+                # print("Predicting...")
+                # test_out_128 = nn.predict(test_images_64)
+                # print(test_out_128.shape)
+                # checkDir(test_128_path)
+                # print("Saving images...")
+                # save_images(test_128_path, test_64_path, test_out_128)
+        # elif args.test:
+        #     print("Loading model...")
+        #     nn = loadModel(args.model)
+        #     test(nn, test_64_path, test_128_path)
+            # print("Loading test images...")
+            # test_images_64 = load_images(test_64_path)
+            # print("Predicting...")
+            # test_out_128 = nn.predict(test_images_64)
+            # print(test_out_128.shape)
+            # checkDir(test_128_path)
+            # print("Saving images...")
+            # save_images(test_128_path, test_64_path, test_out_128)
         else:
             print("Usage: main.py <--train/--test> --model <model_name>")
             exit(1)
