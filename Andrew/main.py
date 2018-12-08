@@ -10,6 +10,7 @@ test_64_path = "xray/test_images_64x64/"
 test_128_path = "xray/test_images_128x128/"
 train_64_path = "xray/train_images_64x64/"
 train_128_path = "xray/train_images_128x128/"
+models_path = "models/"
 
 def loadImages(path, scale=0):
     data = []
@@ -70,11 +71,11 @@ def main():
             print("Training model...")
             nn.fit(train_input, train_output, validation_split=0.1, batch_size=128, epochs=20)
             print("Saving model")
-            nn.save(args.model)
+            nn.save(models_path + args.model)
         if args.test:
             if not args.train:
                 print("Loading model...")
-                nn = neural_net.loadModel(args.model)
+                nn = neural_net.loadModel(models_path + args.model)
             print("Loading test images...")
             test_images_64 = loadImages(test_64_path)
             print("Predicting...")
