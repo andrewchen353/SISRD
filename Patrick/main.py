@@ -14,7 +14,7 @@ output_path = 'outputs/'
 
 def train(modelName):
     key = modelName.split('_')[0] 
-    if key not in models.lookUp:
+    if key not in model.lookUp:
         print('Invalid model given')
         exit(1)
     if exists(models_path + modelName + '.h5'):
