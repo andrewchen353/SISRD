@@ -26,7 +26,7 @@ def train(modelName):
     print('Loading training output images from: ' + training_output_dir)
     training_output = data_utils.load_data(training_output_dir)
     print('Beginning training...')
-    nn.fit(training_input, training_output, batch_size=64, epochs=20, validation_split=0.1)
+    nn.fit(training_input, training_output, batch_size=128, epochs=20, validation_split=0.1)
     print('Saving model to: ' + models_path + modelName + '.h5')
     model.saveModel(nn, models_path + modelName + '.h5')
     return nn
