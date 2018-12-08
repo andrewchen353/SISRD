@@ -20,7 +20,7 @@ def train(modelName):
     if exists(models_path + modelName + '.h5'):
         print('This model has already been created, plus increase version number')
         exit(1)
-    nn = model.lookUp[key]
+    nn = model.lookUp[key]()
     print('Loading training input images from: ' + training_input_dir)
     training_input = data_utils.load_data(training_input_dir)
     print('Loading training output images from: ' + training_output_dir)
