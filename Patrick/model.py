@@ -18,6 +18,7 @@ _H = 128
 #########################################################
 
 def srcnn(learningRate=0.001):
+    print('Creating model of architecture \'SRCNN\'')
     x_input = Input((128, 128, 1))
 
     conv1 = Conv2D(64, (9,9), padding='same', use_bias=True, activation='relu', name='conv1')(x_input)
@@ -36,6 +37,7 @@ def srcnn(learningRate=0.001):
 #########################################################
 
 def subpixelsrcnn(learningRate=0.001):
+    print('Creating model of architecture \'Subpixel + SRCNN\'')
     x_input = Input((64, 64, 1))
 
     conv1 = Conv2D(64, (5,5), padding='same', use_bias=True, activation='relu', name='conv1')(x_input)
@@ -55,6 +57,7 @@ def subpixelsrcnn(learningRate=0.001):
 #########################################################
 
 def esrcnn(learningRate=0.001):
+    print('Creating model of architecture \'ESRCNN\'')
     x_input = Input((64, 64, 1))
 
     conv1 = Conv2D(64, (5,5), padding='same', use_bias=True, activation='relu', name='conv1')(x_input)
@@ -64,7 +67,7 @@ def esrcnn(learningRate=0.001):
     mid3 = Conv2D(32, (1,1), padding='same', use_bias=True, activation='relu', name='mid3')(conv1)
 
     merge = Average()([mid1, mid2, mid3])
-    conv3 = Conv2D(16 , (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(merge)
+    conv3 = Conv2D(4 , (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(merge)
     subpix = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
     y_output = subpix
@@ -79,6 +82,7 @@ def esrcnn(learningRate=0.001):
 #########################################################
 
 def dsrcnn(learningRate=0.001):
+    print('Creating model of architecture \'DSRCNN\'')
     x_input = Input((64, 64, 1))
 
     conv1 = Conv2D(64, (5,5), padding='same', use_bias=True, activation='relu', name='conv1')(x_input)
