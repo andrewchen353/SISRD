@@ -1,6 +1,7 @@
-Model Name,Training Loss,Validation Loss,Actual Performance,Number of Epochs Trained
-srcnn_v3,-,-,9073.98577088845,20
-subpixel_v1,-,-,8991.25640058194,20
-dsrcnn_v2,-,-,8991.753261832257,15
-dsrcnn_v5,-,-,8810.064527941484,20
-esrcnn_v3,333.8792,332.3839,9094.358287261717,20
+Model Name,Training Loss,Validation Loss,Actual Performance,Number of Epochs Trained, Learning Rate, Batch Size, Validation Split, Loss
+srcnn_v3,-,-,9073.98577088845,20,-,-,-,rmse
+subpixel_v1,-,-,8991.25640058194,20,-,-,-,rmse
+dsrcnn_v2,-,-,8991.753261832257,15,-,-,-,rmse
+dsrcnn_v5,-,-,8810.064527941484,20,-,-,-,rmse
+esrcnn_v3,333.8792,332.3839,9094.358287261717,20,-,-,-,rmse
+dsrcnn_v6,322.2022,314.4284,8642.87114574025,20,0.003,64,0.2,rmse

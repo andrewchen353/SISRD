@@ -60,7 +60,7 @@ def main():
     parser.add_argument('--epochs', help='number of epochs to train with', type=int, default=20)
     parser.add_argument('--batch', help='batch size to calculate loss', type=int, default=64)
     parser.add_argument('--lr', help='model learning rate', type=float, default=0.001)
-    parser.add_argument('--validation', help='validation split for training data', type=float, default=0.001)
+    parser.add_argument('--validation', help='validation split for training data', type=float, default=0.1)
     args = parser.parse_args()
     checkValid(args.model)
     checkCurrDirectory()
