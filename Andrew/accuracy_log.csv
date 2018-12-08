@@ -2,7 +2,7 @@ Model Name,Training Loss,Validation Loss,Actual Performance,Number of Epochs Tra
 CNNDAE_v2,-,-,11704,20,0.001,128,-,-
 DSRCNN_v1,-,-,8963,20,0.003,128,-,-
 DSRCNN_v2,~664,-,8787,20,0.001,128,0.1,-
-DSRCNN_v3,661.3170,656.9139,8913.436615881015,20,0.001,128,0.1,conv1 and conv2 have (5"," 5) filter size"," avg instead of add for merge layers
+DSRCNN_v3,661.3170,656.9139,8913.436615881015,20,0.001,128,0.1,"conv1 and conv2 have (5, 5) filter size, avg instead of add for merge layers"
 SRResNet_v1,-,-,13000,10,-,-,-,used mean_squared_error
 SRResNet_v2,-,-,11906,40,-,-,-,used mean_squared_error
 SRResNet_v3,-,-,15701,40,-,-,-,usedAdded bn2 and add2
