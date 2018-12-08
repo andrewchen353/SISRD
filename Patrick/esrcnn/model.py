@@ -26,12 +26,11 @@ def generate_model():
     mid2 = Conv2D(32, (3,3), padding='same', use_bias=True, activation='relu', name='mid2')(conv1)
     mid3 = Conv2D(32, (1,1), padding='same', use_bias=True, activation='relu', name='mid3')(conv1)
 
-    merge = Add()([mid1, mid2, mid3])
+    merge = Average()([mid1, mid2, mid3])
     conv3 = Conv2D(16 , (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(merge)
     subpix = SubpixelConv2D(conv3.shape, scale=2)(conv3)
-    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='relu', name='conv4')(subpix)
 
-    y_output = conv4
+    y_output = subpix
 
     model = Model(x_input, y_output)
     adam = Adam(lr=0.001)
