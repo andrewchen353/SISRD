@@ -6,7 +6,7 @@ import loss
 import argparse
 from keras.models import load_model
 
-def load_images(path, scale):
+def load_images(path, scale=0):
     data = []
     for file in sorted(os.listdir(path)):
         img = cv2.imread(path + file, 0)
