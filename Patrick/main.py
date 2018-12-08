@@ -17,6 +17,9 @@ def train(modelName):
     if key not in models.lookUp:
         print('Invalid model given')
         exit(1)
+    if exists(models_path + modelName + '.h5'):
+        print('This model has already been created, plus increase version number')
+        exit(1)
     nn = model.lookUp[key]
     training_input = data_utils.load_data(training_input_dir)
     training_output = data_utils.load_data(training_output_dir)
@@ -64,4 +67,4 @@ if __name__ == "__main__":
 #    print("srcnn_v2".split('_')[0])
 #    print(models_path + 'srcnn_v2' + '.h5')
 #    print(output_path + 'srcnn_v2' + '/')
-   main()
+    main()
