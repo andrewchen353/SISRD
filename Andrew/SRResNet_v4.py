@@ -40,14 +40,5 @@ def createModel():
 
     return model
 
-# def loadModel(name):
-#     return load_model(name, custom_objects={'rmse': rmse})
-#     # return load_model(name)
-
-# def rmse(y_true, y_pred):
-#     # diff = K.square(y_pred - y_true) * 255**2
-#     diff = K.square(255 * (y_pred - y_true))
-#     return K.sum(K.sqrt(K.sum(diff, axis=(2, 1)) / (W * H)))
-
 if __name__ == "__main__":
     model = createModel()
