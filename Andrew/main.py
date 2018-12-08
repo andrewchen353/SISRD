@@ -6,13 +6,12 @@ import loss
 import argparse
 from keras.models import load_model
 
-def load_images(path):
+def load_images(path, scale):
     data = []
     for file in sorted(os.listdir(path)):
         img = cv2.imread(path + file, 0)
-        w, h = img.shape
-        # if w == 64 and h == 64:
-        #     img = cv2.resize(img, (128,128), interpolation=cv2.INTER_CUBIC)
+        if scale:
+            img = cv2.resize(img, (128,128), interpolation=cv2.INTER_CUBIC)
         w, h = img.shape
         img = img.reshape((w,h,1))
         img = img.astype(np.float32) / 255
@@ -62,7 +61,8 @@ def main():
                 print(args.network, "is not a valid model")
                 exit(1)
             print("Loading images...")
-            train_input = load_images(train_64_path)
+            scale = args.network == "CNNDAE" or args.network == "SRResNet"
+            train_input = load_images(train_64_path, scale)
             print(train_input.shape)
             train_output = load_images(train_128_path)
             print(train_output.shape)
