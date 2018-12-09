@@ -208,6 +208,8 @@ def ResNet(lr):
         rec1 = BatchNormalization(axis=3)(rec1)
         # rec = PReLU(alpha_initializer='zeros')(rec) #v1
         rec1 = LeakyReLU(alpha=0.3)(rec1) #v2
+        if i%2 == 0:
+            rec = Add()([rec, rec1])
         rec = Add()([rec1, rec])
     
     conv2 = Conv2D(1, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
