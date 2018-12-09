@@ -167,6 +167,49 @@ def TEST(lr):
 
     return model
 
+######################################################
+# Implementing DSRCNNx2
+######################################################
+def DSRCNNx2(lr):
+    x_input = Input((64, 64, 1))
+
+    DSRCNN_1 = subblock(x_input, 1)
+    DSRCNN_2 = subblock(x_input, 2)
+
+    sub = Subtract()([DSRCNN_1, DSRCNN_2])
+    conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(sub)
+
+    model = Model(x_input, conv1)
+
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
+
+    return model
+
+def subblock(input,number)
+    conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(input)
+    conv2 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1)
+
+    mp1   = MaxPool2D(pool_size=(2, 2), padding='same')(conv2)
+    conv3 = Conv2D(128, (3, 3), padding='same', use_bias=True, activation='relu')(mp1)
+    conv4 = Conv2D(128, (3, 3), padding='same', use_bias=True, activation='relu')(conv3)
+
+    mp2   = MaxPool2D(pool_size=(2, 2), padding='same')(conv4)
+    conv5 = Conv2D(256, (3, 3), padding='same', use_bias=True, activation='relu')(mp2)
+    spc1  = SubpixelConv2D(conv5.shape, name='spc1_'+number, scale=2)(conv5)
+    conv6 = Conv2D(128, (3, 3), padding='same', use_bias=True)(spc1)
+    conv7 = Conv2D(128, (3, 3), padding='same', use_bias=True)(conv6)
+
+    add1 = Add()([conv4, conv7])
+
+    spc2  = SubpixelConv2D(add1.shape, name='spc2_'+number, scale=2)(add1)
+    conv8 = Conv2D(64, (3, 3), padding='same', use_bias=True)(spc2)
+    conv9 = Conv2D(64, (3, 3), padding='same', use_bias=True)(conv8)
+
+    add2   = Add()([conv2, conv9])
+    conv10 = Conv2D(4, (3, 3), padding='same', use_bias=True)(add2)
+    spc3   = SubpixelConv2D(conv10.shape, name='spc3_'+number, scale=2)(conv10)
+    return spc3
+
 def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
     # return load_model(name)
@@ -177,6 +220,7 @@ lookup['DSRCNN']   = DSRCNN
 lookup['DDSRCNN']  = DDSRCNN
 lookup['SRResNet'] = SRResNet
 lookup['TEST']     = TEST
+lookup['DSRCNNx2'] = DSRCNNx2
 
 if __name__ == "__main__":
     cnndae   = lookup['CNNDAE']
@@ -184,3 +228,4 @@ if __name__ == "__main__":
     ddsrcnn  = lookup['DDSRCNN']
     srresnet = lookup['SRResNet']
     test     = lookup['TEST']
+    dsrcnnx2 = lookup['DSRCNNx2']
