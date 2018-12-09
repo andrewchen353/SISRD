@@ -1,7 +1,8 @@
 import numpy as np
 import loss
 from subpixel import SubpixelConv2D
-from keras.layers import Add, Subtract, Average, Input, Conv2D, Deconv2D, MaxPooling2D, UpSampling2D, PReLU, BatchNormalization
+from keras.layers import Add, Subtract, Average, Input, Conv2D, Deconv2D
+from keras.layers import MaxPooling2D, UpSampling2D, PReLU, LeakyReLU, BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, load_model
 
@@ -168,27 +169,28 @@ def TEST(lr):
     return model
 
 def ResNet(lr):
-    depth = 4
+    depth = 16 #v2, v1 = 4
     x_input = Input((64, 64, 1))
 
     conv1  = Conv2D(1, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
-    rec = PReLU(alpha_initializer='zeros')(conv1)
+    # rec = PReLU(alpha_initializer='zeros')(conv1) #v1
+    rec = PReLU(alpha_initializer='zeros')(conv1) #v2
 
     # DnCNN network
     for i in range(depth):
         rec  = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
         rec = BatchNormalization(axis=3)(rec)
-        rec = PReLU(alpha_initializer='zeros')(rec)
-        # rec = Conv2D(16, (3, 3), padding='same', activation='relu')(rec)
-        # rec = BatchNormalization(axis=3)(rec)
+        # rec = PReLU(alpha_initializer='zeros')(rec) #v1
+        rec = LeakyReLU(alpha=0.3)(rec) #v2
     
     conv2 = Conv2D(1, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
-    sub = Subtract()([conv2, x_input])
+    sub = Subtract()([x_input, conv2])
 
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(sub)
     spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
-    model = Model(x_input, spc1)
+    # model = Model(spc1, x_input) #v1
+    model = Model(x_input, spc1) #v2
 
     model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
