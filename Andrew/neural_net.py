@@ -168,6 +168,32 @@ def TEST(lr):
 
     return model
 
+def TEST2(lr):
+    x_input = Input((64, 64, 1))
+
+    conv1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
+    conv2   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1)
+    deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(conv2)
+    
+    add1    = Add()([conv2, deconv1])
+    deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1)
+    
+    add2  = Add()([conv1, deconv2])
+    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
+    spc1  = SubpixelConv2D(conv3.shape, name='spc1', scale=2)(conv3)
+
+    conv1_1 = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
+    spc2  = SubpixelConv2D(conv1_1.shape, name='spc2', scale=2)(conv1_1)
+
+    sub1  = Subtract()([spc2, spc1])
+    conv4 = Conv2D(1, (1, 1), padding='same', use_bias=True, activation='relu')(sub1)
+
+    model = Model(x_input, conv4)
+
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
+
+    return model
+
 def ResNet(lr):
     depth = 16 #v2, v1 = 4
     x_input = Input((64, 64, 1))
@@ -207,6 +233,7 @@ lookup['DDSRCNN']  = DDSRCNN
 lookup['SRResNet'] = SRResNet
 lookup['TEST']     = TEST
 lookup['ResNet']   = ResNet
+lookup['TEST2']    = TEST2
 
 if __name__ == "__main__":
     cnndae   = lookup['CNNDAE'](0.001)
@@ -214,5 +241,6 @@ if __name__ == "__main__":
     ddsrcnn  = lookup['DDSRCNN'](0.001)
     srresnet = lookup['SRResNet'](0.001)
     test     = lookup['TEST'](0.001)
-    resnet    = lookup['ResNet'](0.001)
-    resnet.summary()
+    resnet   = lookup['ResNet'](0.001)
+    test2    = lookup['TEST2'](0.001)
+    test2.summary()
