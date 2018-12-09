@@ -136,6 +136,37 @@ def SRResNet(lr):
 
     return model
 
+######################################################
+# Implementing ESRCNN -> DSRCNN
+######################################################
+def TEST(lr):
+    x_input = Input((64, 64, 1))
+
+    conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
+
+    l1_conv1 = Conv2D(64, (1, 1), padding='same', use_bias=True, activation='relu')(conv1)
+    l1_conv2 = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(conv1)
+    l1_conv3 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1)
+
+    add1 = Add()([l1_conv1, l1_conv2, l1_conv3])
+
+    conv2   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(add1)
+    conv3   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv2)
+    deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(conv3)
+    
+    add2    = Add()([conv3, deconv1])
+    deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add2)
+    
+    add3  = Add()([conv2, deconv2])
+    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add3)
+    spc1  = SubpixelConv2D(conv3.shape, scale=2)(conv3)
+
+    model = Model(x_input, spc1)
+
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
+
+    return model
+
 def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
     # return load_model(name)
@@ -145,9 +176,11 @@ lookup['CNNDAE']   = CNNDAE
 lookup['DSRCNN']   = DSRCNN
 lookup['DDSRCNN']  = DDSRCNN
 lookup['SRResNet'] = SRResNet
+lookup['TEST']     = TEST
 
 if __name__ == "__main__":
     cnndae   = lookup['CNNDAE']
     dsrcnn   = lookup['DSRCNN']
     ddsrcnn  = lookup['DDSRCNN']
     srresnet = lookup['SRResNet']
+    test     = lookup['TEST']
