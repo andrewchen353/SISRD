@@ -58,6 +58,11 @@ def createDir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+def checkDir():
+    if not exists(train_64_path):
+        print('Woah, you\'re in the wrong directory, go to SISRD/')
+        exit(1)
+
 def train(network, model, in_path, out_path, lr, vs, batch, epochs):
     print("Creating model...")
     nn = neural_net.lookup[network](lr)
@@ -90,6 +95,7 @@ def main():
     parser.add_argument("--epochs", type=int, default=20, help="number of epochs to train")
     parser.add_argument("--model", help="model to train and version number <model_name>_v<#>")
     args = parser.parse_args()
+    checkDir()
 
     if args.model and args.train:
         verifyTrainModelName(args.model)
