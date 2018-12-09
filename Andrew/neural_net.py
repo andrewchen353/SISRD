@@ -167,33 +167,32 @@ def TEST(lr):
 
     return model
 
-######################################################
-# Implementing DSRCNNx2
-######################################################
-def DSRCNNx2(lr):
+def ResNet(lr):
+    depth = 4
     x_input = Input((64, 64, 1))
 
-    DSRCNN_1 = subblock(x_input, 1)
-    spc1  = SubpixelConv2D(conv3.shape, name='spc'+str(number), scale=2)(DSRCNN_1)
-    DSRCNN_2 = subblock(spc1, 2)
+    conv1  = Conv2D(1, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
+    rec = PReLU(alpha_initializer='zeros')(conv1)
 
-    model = Model(x_input, DSRCNN_2)
+    # DnCNN network
+    for i in range(depth):
+        rec  = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
+        rec = BatchNormalization(axis=3)(rec)
+        rec = PReLU(alpha_initializer='zeros')(rec)
+        # rec = Conv2D(16, (3, 3), padding='same', activation='relu')(rec)
+        # rec = BatchNormalization(axis=3)(rec)
+    
+    conv2 = Conv2D(1, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
+    sub = Subtract()([conv2, x_input])
+
+    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(sub)
+    spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
+
+    model = Model(x_input, spc1)
 
     model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
     return model
-
-def subblock(input, number):
-    conv1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
-    conv2   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1)
-    deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(input)
-    
-    add1    = Add()([conv2, deconv1])
-    deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1)
-    
-    add2  = Add()([conv1, deconv2])
-    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
-    return conv3
 
 def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
@@ -205,7 +204,7 @@ lookup['DSRCNN']   = DSRCNN
 lookup['DDSRCNN']  = DDSRCNN
 lookup['SRResNet'] = SRResNet
 lookup['TEST']     = TEST
-lookup['DSRCNNx2'] = DSRCNNx2
+lookup['ResNet']   = ResNet
 
 if __name__ == "__main__":
     cnndae   = lookup['CNNDAE'](0.001)
@@ -213,5 +212,5 @@ if __name__ == "__main__":
     ddsrcnn  = lookup['DDSRCNN'](0.001)
     srresnet = lookup['SRResNet'](0.001)
     test     = lookup['TEST'](0.001)
-    dsrcnnx2 = lookup['DSRCNNx2'](0.001)
-    dsrcnnx2.summary()
+    resnet    = lookup['ResNet'](0.001)
+    resnet.summary()
