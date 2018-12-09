@@ -1,5 +1,6 @@
 import numpy as np
-from keras.layers import Input, Subtract, Add, Conv2D, Deconv2D, UpSampling2D, BatchNormalization, LeakyReLU, Average
+from keras.layers import Input, Subtract, Add, Conv2D, Deconv2D
+from keras.layers import UpSampling2D, BatchNormalization, LeakyReLU, PReLU
 from keras.activations import relu
 from keras.models import Model, load_model
 from keras.optimizers import Adam
@@ -106,6 +107,44 @@ def dsrcnn(learningRate=0.001):
     return model
 
 #########################################################
+# Distilled ResNet Super Resolution (Distlled ResNetSR)
+#########################################################
+
+def resnet(learningRate=0.001):
+    print('Creating model of architecture \'Distilled ResNetSr\'')
+    x_input = Input((64, 64, 1))
+
+    conv1 = Conv2D(32, (1,1), padding='same', use_bias=True, name='conv1')(x_input)
+    relu1 = PReLU(alpha_initializer='zeros', name='relu1')(conv1)
+
+    conv2 = Conv2D(32, (5,5), padding='same', use_bias=True, name='conv2')(relu1)
+    batch1 = BatchNormalization(axis=3, name='batch1')(conv2)
+    relu2 = PReLU(alpha_initializer='zeros', name='relu2')(batch1)
+
+    conv3 = Conv2D(32, (3,3), padding='same', use_bias=True, name='conv3')(relu2)
+    batch2 = BatchNormalization(axis=3, name='batch2')(conv3)
+    relu3 = PReLU(alpha_initializer='zeros', name='relu3')(batch2)
+
+    add1 = Add()([relu3, relu1])
+
+    add2 = Add()([add1, relu1])
+
+    subpix = SubpixelConv2D(add2.shape, scale=2)(add2)
+
+    conv4 = Conv2D(64, (5,5), padding='same', use_bias=True, name='conv4')(subpix)
+    relu4 = PReLU(alpha_initializer='zeros', name='relu4')(conv4)
+
+    conv5 = Conv2D(1, (3,3), padding='same', use_bias=True, name='conv5')(relu4)
+    relu5 = PReLU(alpha_initializer='zeros', name='relu5')(conv5)
+
+    y_output = relu5
+
+    model = Model(x_input, y_output)
+    adam = Adam(lr=learningRate)
+    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    return model
+
+#########################################################
 # test
 #########################################################
 
@@ -158,12 +197,14 @@ lookUp['srcnn'] = srcnn
 lookUp['subpixel'] = subpixelsrcnn
 lookUp['esrcnn'] = esrcnn
 lookUp['dsrcnn'] = dsrcnn
+lookUp['resnet'] = resnet
 lookUp['test'] = testnet
 
 if __name__ == "__main__":
     print('test model')
-    lookUp['srcnn'](0.003) #.summary()
-    lookUp['subpixel'](0.003) #.summary()
-    lookUp['esrcnn'](0.003) #.summary()
-    lookUp['dsrcnn'](0.003) #.summary()
-    lookUp['test'](0.003).summary()
+    #lookUp['srcnn'](0.003).summary()
+    #lookUp['subpixel'](0.003).summary()
+    #lookUp['esrcnn'](0.003).summary()
+    #lookUp['dsrcnn'](0.003).summary()
+    #lookUp['resnet']().summary()
+    #lookUp['test'](0.003).summary()
