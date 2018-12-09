@@ -177,6 +177,45 @@ def testnet(learningRate=0.001):
     model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
 
+#########################################################
+# test 2
+#########################################################
+
+def testnet2(learningRate=0.001):
+    print('Creating model of architecture \'testnet2\'')
+    x_input = Input((64, 64, 1))
+
+    conv1 = Conv2D(64, (5,5), padding='same', use_bias=True, name='conv1')(x_input)
+    relu1 = PReLU(alpha_initializer='zeros', name='relu1')(conv1)
+    conv2 = Conv2D(64, (3,3), padding='same', use_bias=True, name='conv2')(relu1)
+    relu2 = PReLU(alpha_initializer='zeros', name='relu2')(conv2)
+
+    deconv = Deconv2D(64, (3,3), padding='same', use_bias=True, name='deconv')(relu2)
+    relu3 = PReLU(alpha_initializer='zeros', name='relu3')(deconv)
+    add1 = Add()([relu2, relu3])
+
+    deconv2 = Deconv2D(64, (3,3), padding='same', use_bias=True, name='deconv2')(add1)
+    relu4 = PReLU(alpha_initializer='zeros', name='relu4')(deconv2)
+    add2 = Add()([relu4, relu1])
+
+    conv3 = Conv2D(32, (3,3), padding='same', use_bias=True, name='conv3')(add2)
+    relu5 = PReLU(alpha_initializer='zeros', name='relu5')(conv3)
+    subpix = SubpixelConv2D(relu4.shape, scale=2, name='subpix1')(relu5)
+
+    conv1_2 = Conv2D(32, (1,1), padding='same', use_bias=True, name='conv1_2')(x_input)
+    relu6 = PReLU(alpha_initializer='zeros', name='relu6')(conv1_2)
+    subpix1_1 = SubpixelConv2D(conv1_2.shape, scale=2, name='subpix1_1')(relu6)
+
+    add3 = Subtract()([subpix1_1, subpix])
+    conv4 = Conv2D(1 , (1,1), padding='same', use_bias=True, activation='relu', name='conv4')(add3)
+
+    y_output = conv4
+
+    model = Model(x_input, y_output)
+    adam = Adam(lr=learningRate)
+    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    return model
+
 def rmse(y_true, y_pred):
     diff = K.square(255 * (y_pred - y_true))
     return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
@@ -199,6 +238,7 @@ lookUp['esrcnn'] = esrcnn
 lookUp['dsrcnn'] = dsrcnn
 lookUp['resnet'] = resnet
 lookUp['test'] = testnet
+lookUp['test2'] = testnet2
 
 if __name__ == "__main__":
     print('test model')
@@ -208,3 +248,4 @@ if __name__ == "__main__":
     #lookUp['dsrcnn'](0.003).summary()
     #lookUp['resnet']().summary()
     #lookUp['test'](0.003).summary()
+    lookUp['test2'](0.003).summary()
