@@ -204,13 +204,14 @@ def ResNet(lr):
 
     # DnCNN network
     for i in range(depth):
-        rec  = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
-        rec = BatchNormalization(axis=3)(rec)
+        rec1  = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
+        rec1 = BatchNormalization(axis=3)(rec1)
         # rec = PReLU(alpha_initializer='zeros')(rec) #v1
-        rec = LeakyReLU(alpha=0.3)(rec) #v2
+        rec1 = LeakyReLU(alpha=0.3)(rec1) #v2
+        rec = Add()([rec1, rec])
     
     conv2 = Conv2D(1, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
-    sub = Subtract()([x_input, conv2])
+    sub = Add()([x_input, conv2])
 
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(sub)
     spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
