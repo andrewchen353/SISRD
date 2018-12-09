@@ -173,11 +173,17 @@ def TEST(lr):
 def DSRCNNx2(lr):
     x_input = Input((64, 64, 1))
 
-    DSRCNN_1 = subblock(x_input, 1)
-    DSRCNN_2 = subblock(x_input, 2)
+    conv1_1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
+    conv2_1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1_1)
 
-    sub = Subtract()([DSRCNN_1, DSRCNN_2])
-    conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(sub)
+    conv1_2   = Conv2D  (64, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
+    conv2_2   = Conv2D  (64, (3, 3), padding='same', use_bias=True, activation='relu')(conv1_2)
+
+    DSRCNN_1 = subblock(conv2_1, 1)
+    DSRCNN_2 = subblock(conv2_2, 2)
+
+    avg = Average()([DSRCNN_1, DSRCNN_2])
+    conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(avg)
 
     model = Model(x_input, conv1)
 
@@ -186,9 +192,7 @@ def DSRCNNx2(lr):
     return model
 
 def subblock(input,number):
-    conv1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(input)
-    conv2   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1)
-    deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(conv2)
+    deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(input)
     
     add1    = Add()([conv2, deconv1])
     deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1)
