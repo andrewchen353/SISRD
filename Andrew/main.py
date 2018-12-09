@@ -59,7 +59,7 @@ def createDir(path):
         os.makedirs(path)
 
 def checkDir():
-    if not os.exists(train_64_path):
+    if not os.path.exists(train_64_path):
         print('Woah, you\'re in the wrong directory, go to SISRD/')
         exit(1)
 
