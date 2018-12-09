@@ -106,7 +106,7 @@ def main():
         if input("Would you like to test the model? y/n: ") == 'y':
             test(nn, test_64_path, result_path + network + "/")
     elif args.model and args.test:
-        verifyTestModelName(modelName)
+        verifyTestModelName(args.model)
         print("Loading model...")
         nn = neural_net.loadModel(models_path + args.model)
         test(nn, test_64_path, result_path + network + "/")
