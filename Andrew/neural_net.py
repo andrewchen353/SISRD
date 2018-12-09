@@ -1,7 +1,7 @@
 import numpy as np
 import loss
 from subpixel import SubpixelConv2D
-from keras.layers import Add, Subtract, Average, Input, Conv2D, Deconv2D
+from keras.layers import Add, Subtract, Average, Input, Conv2D, Deconv2D, Lambda
 from keras.layers import MaxPooling2D, UpSampling2D, PReLU, LeakyReLU, BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, load_model
@@ -225,6 +225,30 @@ def ResNet(lr):
 
     return model
 
+# https://arxiv.org/pdf/1706.00552.pdf
+def IDCNN(lr):
+    x_input = Input((64, 64, 1))
+
+    conv1 = Conv2D(1 , (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
+    loop = conv1
+
+    for i in range(6):
+        conv2 = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(loop)
+        loop  = BatchNormalization(axis=3)(conv2)
+
+    conv3  = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(loop)
+    div    = Lambda(lambda inputs: inputs[0]/(inputs[1] + 1e-7))([x_input, conv3])
+    lrelu1 = LeakyReLU(alpha=0.3)(div)
+    conv4  = Conv2D(4, (3, 3), padding='same', use_bias=True)(lrelu1)
+    spc1   = SubpixelConv2D(conv3.shape, scale=2)(conv4)
+
+    model = Model(x_input, spc1) #v2
+
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
+
+    return model
+    
+
 def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
     # return load_model(name)
@@ -237,6 +261,7 @@ lookup['SRResNet'] = SRResNet
 lookup['TEST']     = TEST
 lookup['ResNet']   = ResNet
 lookup['TEST2']    = TEST2
+lookup['IDCNN']    = IDCNN
 
 if __name__ == "__main__":
     cnndae   = lookup['CNNDAE'](0.001)
@@ -246,4 +271,5 @@ if __name__ == "__main__":
     test     = lookup['TEST'](0.001)
     resnet   = lookup['ResNet'](0.001)
     test2    = lookup['TEST2'](0.001)
-    test2.summary()
+    idcnn    = lookup['IDCNN'](0.001)
+    idcnn.summary()
