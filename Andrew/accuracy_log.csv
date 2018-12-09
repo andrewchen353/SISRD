@@ -7,3 +7,5 @@ DSRCNN_v4,~320,-,8781.791015804805,20,0.001,64,0.15,-
 SRResNet_v1,-,-,13000,10,-,-,-,used mean_squared_error
 SRResNet_v2,-,-,11906,40,-,-,-,used mean_squared_error
 SRResNet_v3,-,-,15701,40,-,-,-,usedAdded bn2 and add2
+TEST_v1,322.4937,329.0142,8915.793456903437,20,0.001,64,0.15,"Network used ESRCNN into DSRCNN"
+TEST_v2,452.9600,345.1469,-,19,0.001,64,0.15,"Network used ESRCNN into DSRCNN, do not use"
