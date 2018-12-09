@@ -11,6 +11,7 @@ test_128_path = "xray/test_images_128x128/"
 train_64_path = "xray/train_images_64x64/"
 train_128_path = "xray/train_images_128x128/"
 models_path = "Andrew/models/"
+result_path = "xray/"
 
 def loadImages(path, scale=0):
     data = []
@@ -57,15 +58,20 @@ def createDir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def train(network, model, in_path, out_path):
+def checkDir():
+    if not os.path.exists(train_64_path):
+        print('Woah, you\'re in the wrong directory, go to SISRD/')
+        exit(1)
+
+def train(network, model, in_path, out_path, lr, vs, batch, epochs):
     print("Creating model...")
-    nn = neural_net.lookup[network]()
+    nn = neural_net.lookup[network](lr)
     print("Loading images...")
     scale = network == "CNNDAE" or network == "SRResNet"
     train_input = loadImages(in_path, scale)
     train_output = loadImages(out_path)
     print("Training model...")
-    nn.fit(train_input, train_output, validation_split=0.1, batch_size=128, epochs=20)
+    nn.fit(train_input, train_output, validation_split=vs, batch_size=batch, epochs=epochs)
     print("Saving model")
     nn.save(models_path + model + ".h5")
     return nn
@@ -75,29 +81,35 @@ def test(nn, in_path, out_path):
     test_images_64 = loadImages(in_path)
     print("Predicting...")
     test_out_128 = nn.predict(test_images_64)
-    createDir(test_128_path)
+    createDir(out_path)
     print("Saving images...")
     saveImages(out_path, in_path, test_out_128)
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train", action="store_true")
-    parser.add_argument("--test", action="store_true")
-    parser.add_argument("--model")
+    parser.add_argument("--train", action="store_true", help="bool determining whether or not to train")
+    parser.add_argument("--test", action="store_true", help="bool determining whether or not to test")
+    parser.add_argument("--lr", type=float, default=0.001, help="network learning rate")
+    parser.add_argument("--validation", type=float, default=0.1, help="validation split for training data")
+    parser.add_argument("--batch", type=int, default=128, help="batch size for calculating loss")
+    parser.add_argument("--epochs", type=int, default=20, help="number of epochs to train")
+    parser.add_argument("--model", help="model to train and version number <model_name>_v<#>")
     args = parser.parse_args()
+    checkDir()
 
     if args.model and args.train:
         verifyTrainModelName(args.model)
         network = args.model.split('_')[0]
         verifyNetwork(network)
-        nn = train(network, args.model, train_64_path, train_128_path)
+        nn = train(network, args.model, train_64_path, train_128_path, \
+                   args.lr, args.validation, args.batch, args.epochs)
         if input("Would you like to test the model? y/n: ") == 'y':
-            test(nn, test_64_path, test_128_path)
+            test(nn, test_64_path, result_path + network + "/")
     elif args.model and args.test:
         verifyTestModelName(modelName)
         print("Loading model...")
         nn = neural_net.loadModel(models_path + args.model)
-        test(nn, test_64_path, test_128_path)
+        test(nn, test_64_path, result_path + network + "/")
     else:
         print("Usage: main.py <--train/--test> --model <model_name>_v#")
         exit(1)
