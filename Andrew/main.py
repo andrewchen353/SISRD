@@ -95,7 +95,8 @@ def main():
         verifyTrainModelName(args.model)
         network = args.model.split('_')[0]
         verifyNetwork(network)
-        nn = train(network, args.model, train_64_path, train_128_path, args.lr, args.validation, args.batch, args.epochs)
+        nn = train(network, args.model, train_64_path, train_128_path, \
+                   float(args.lr), int(args.validation), int(args.batch), int(args.epochs))
         if input("Would you like to test the model? y/n: ") == 'y':
             test(nn, test_64_path, result_path + network + "/")
     elif args.model and args.test:
