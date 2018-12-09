@@ -104,12 +104,12 @@ def main():
         nn = train(network, args.model, train_64_path, train_128_path, \
                    args.lr, args.validation, args.batch, args.epochs)
         if input("Would you like to test the model? y/n: ") == 'y':
-            test(nn, test_64_path, result_path + network + "/")
+            test(nn, test_64_path, result_path + args.model + "/")
     elif args.model and args.test:
         verifyTestModelName(args.model)
         print("Loading model...")
         nn = neural_net.loadModel(models_path + args.model)
-        test(nn, test_64_path, result_path + network + "/")
+        test(nn, test_64_path, result_path + args.model + "/")
     else:
         print("Usage: main.py <--train/--test> --model <model_name>_v#")
         exit(1)
