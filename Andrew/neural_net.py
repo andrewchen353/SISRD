@@ -173,25 +173,19 @@ def TEST(lr):
 def DSRCNNx2(lr):
     x_input = Input((64, 64, 1))
 
-    conv1_1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
-    conv2_1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1_1)
+    DSRCNN_1 = subblock(x_input, 1)
+    spc1  = SubpixelConv2D(conv3.shape, name='spc'+str(number), scale=2)(DSRCNN_1)
+    DSRCNN_2 = subblock(spc1, 2)
 
-    conv1_2   = Conv2D  (64, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
-    conv2_2   = Conv2D  (64, (3, 3), padding='same', use_bias=True, activation='relu')(conv1_2)
-
-    DSRCNN_1 = subblock(conv2_1, 1)
-    DSRCNN_2 = subblock(conv2_2, 2)
-
-    avg = Average()([DSRCNN_1, DSRCNN_2])
-    conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(avg)
-
-    model = Model(x_input, conv1)
+    model = Model(x_input, DSRCNN_2)
 
     model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
     return model
 
-def subblock(input,number):
+def subblock(input, number):
+    conv1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
+    conv2   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1)
     deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(input)
     
     add1    = Add()([conv2, deconv1])
@@ -199,8 +193,7 @@ def subblock(input,number):
     
     add2  = Add()([conv1, deconv2])
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
-    spc1  = SubpixelConv2D(conv3.shape, name='spc'+str(number), scale=2)(conv3)
-    return spc1
+    return conv3
 
 def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
