@@ -1,5 +1,5 @@
 import numpy as np
-from keras.layers import Input, Add, Conv2D, Deconv2D, UpSampling2D, BatchNormalization, LeakyReLU, Average
+from keras.layers import Input, Subtract, Add, Conv2D, Deconv2D, UpSampling2D, BatchNormalization, LeakyReLU, Average
 from keras.activations import relu
 from keras.models import Model, load_model
 from keras.optimizers import Adam
@@ -122,9 +122,14 @@ def testnet(learningRate=0.001):
     deconv2 = Deconv2D(64, (3,3), padding='same', use_bias=True, activation='relu', name='deconv2')(add1)
     add2 = Add()([deconv2, conv1])
 
-    conv3 = Conv2D(32 , (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(add2)
+    conv3 = Conv2D(32, (3,3), padding='same', use_bias=True, activation='relu', name='conv3')(add2)
     subpix = SubpixelConv2D(conv3.shape, scale=2, name='subpix1')(conv3)
-    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='relu', name='conv4')(subpix)
+
+    conv1_2 = Conv2D(32, (3,3), padding='same', use_bias=True, activation='relu', name='conv1_2')(x_input)
+    subpix1_1 = SubpixelConv2D(conv1_2.shape, scale=2, name='subpix1_1')(conv1_2)
+
+    add3 = Subtract()([subpix1_1, subpix])
+    conv4 = Conv2D(1 , (1,1), padding='same', use_bias=True, activation='relu', name='conv4')(add3)
 
     y_output = conv4
 
