@@ -239,7 +239,7 @@ def IDCNN(lr):
     conv3  = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(loop)
     div    = Lambda(lambda inputs: inputs[0]/(inputs[1] + 1e-7))([x_input, conv3])
     tanh1  = Activation('tanh')(div)
-    conv4  = Conv2D(4, (3, 3), padding='same', use_bias=True)(tanh1)
+    # conv4  = Conv2D(4, (3, 3), padding='same', use_bias=True)(tanh1)
     spc1   = SubpixelConv2D(conv3.shape, scale=2)(conv4)
 
     model = Model(x_input, spc1) #v2
