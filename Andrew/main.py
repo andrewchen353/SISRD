@@ -67,7 +67,7 @@ def train(network, model, in_path, out_path):
     print("Training model...")
     nn.fit(train_input, train_output, validation_split=0.1, batch_size=128, epochs=20)
     print("Saving model")
-    nn.save(models_path + model)
+    nn.save(models_path + model + ".h5")
     return nn
 
 def test(nn, in_path, out_path):
