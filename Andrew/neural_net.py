@@ -14,7 +14,7 @@ from keras.models import Model, load_model
 # "Medical image denoising using convolutional denoising autoencoders"
 # CNNDAE
 ######################################################
-def CNNDAE():
+def CNNDAE(lr=0.001):
     x_input = Input((128, 128, 1))
 
     conv1 = Conv2D(64, (7, 7), padding='same', activation='relu')(x_input)
@@ -31,7 +31,7 @@ def CNNDAE():
 
     model = Model(x_input, conv5)
 
-    model.compile(loss=loss.rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
     return model
 
@@ -40,7 +40,7 @@ def CNNDAE():
 # https://github.com/titu1994/Image-Super-Resolution
 # Denoiseing (Auto Encoder) Super Resolution CNN (DSRCNN)
 ######################################################
-def DSRCNN():
+def DSRCNN(lr=0.001):
     x_input = Input((64, 64, 1))
 
     # conv1   = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(x_input) #v1-2
@@ -48,20 +48,20 @@ def DSRCNN():
     conv2   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1)
     deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(conv2)
     
-    # add1    = Add()([conv2, deconv1])
-    # deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1) #v1-2
-    avg1    = Average()([conv2, deconv1])
-    deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(avg1) #v3
+    add1    = Add()([conv2, deconv1])
+    deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1) #v1-2
+    # avg1    = Average()([conv2, deconv1])
+    # deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(avg1) #v3
     
-    # add2  = Add()([conv1, deconv2])
-    # conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2) #v1-2
-    avg2  = Average()([conv1, deconv2])
-    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(avg2) #v3
+    add2  = Add()([conv1, deconv2])
+    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2) #v1-2
+    # avg2  = Average()([conv1, deconv2])
+    # conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(avg2) #v3
     spc1  = SubpixelConv2D(conv3.shape, scale=2)(conv3)
 
     model = Model(x_input, spc1)
 
-    model.compile(loss=loss.rmse, optimizer=Adam(lr=0.001), metrics=['accuracy']) # v1 -> lr=0.003, v2 -> lr=0.001
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy']) # v1 -> lr=0.003, v2 -> lr=0.001
 
     return model
 
@@ -70,7 +70,7 @@ def DSRCNN():
 # https://github.com/titu1994/Image-Super-Resolution
 # Denoiseing (Auto Encoder) Super Resolution CNN (DSRCNN)
 ######################################################
-def DDSRCNN():
+def DDSRCNN(lr=0.001):
     x_input = Input((64, 64, 1))
 
     conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
@@ -98,7 +98,7 @@ def DDSRCNN():
 
     model = Model(x_input, spc3)
 
-    model.compile(loss=loss.rmse, optimizer=Adam(lr=0.001), metrics=['accuracy'])
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
     return model
 
@@ -108,7 +108,7 @@ def DDSRCNN():
 #  A Brief Review" SRResNet - Fig.5c
 # SRResNet
 ######################################################
-def SRResNet():
+def SRResNet(lr=0.001):
     # takes input of 128x128
     x_input = Input((128, 128, 1))
 
@@ -132,7 +132,7 @@ def SRResNet():
     model = Model(x_input, conv5)
 
     # model.compile(loss='mean_squared_error', optimizer=Adam(lr=0.001), metrics=['accuracy']) #v1-3
-    model.compile(loss=loss.rmse, optimizer=Adam(lr=0.001), metrics=['accuracy']) # v4
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy']) # v4
 
     return model
 
