@@ -14,7 +14,7 @@ from keras.models import Model, load_model
 # "Medical image denoising using convolutional denoising autoencoders"
 # CNNDAE
 ######################################################
-def CNNDAE(lr=0.001):
+def CNNDAE(lr):
     x_input = Input((128, 128, 1))
 
     conv1 = Conv2D(64, (7, 7), padding='same', activation='relu')(x_input)
@@ -40,7 +40,7 @@ def CNNDAE(lr=0.001):
 # https://github.com/titu1994/Image-Super-Resolution
 # Denoiseing (Auto Encoder) Super Resolution CNN (DSRCNN)
 ######################################################
-def DSRCNN(lr=0.001):
+def DSRCNN(lr):
     x_input = Input((64, 64, 1))
 
     # conv1   = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(x_input) #v1-2
@@ -70,7 +70,7 @@ def DSRCNN(lr=0.001):
 # https://github.com/titu1994/Image-Super-Resolution
 # Denoiseing (Auto Encoder) Super Resolution CNN (DSRCNN)
 ######################################################
-def DDSRCNN(lr=0.001):
+def DDSRCNN(lr):
     x_input = Input((64, 64, 1))
 
     conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
@@ -108,7 +108,7 @@ def DDSRCNN(lr=0.001):
 #  A Brief Review" SRResNet - Fig.5c
 # SRResNet
 ######################################################
-def SRResNet(lr=0.001):
+def SRResNet(lr):
     # takes input of 128x128
     x_input = Input((128, 128, 1))
 

@@ -58,7 +58,7 @@ def createDir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def train(network, model, in_path, out_path, lr=0.001, vs=0.1, batch=128, epochs=20):
+def train(network, model, in_path, out_path, lr, vs, batch, epochs):
     print("Creating model...")
     nn = neural_net.lookup[network](lr)
     print("Loading images...")
@@ -82,13 +82,13 @@ def test(nn, in_path, out_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train", action="store_true")
-    parser.add_argument("--test", action="store_true")
-    parser.add_argument("--lr")
-    parser.add_argument("--validation")
-    parser.add_argument("--batch")
-    parser.add_argument("--epochs")
-    parser.add_argument("--model")
+    parser.add_argument("--train", action="store_true", help="bool determining whether or not to train")
+    parser.add_argument("--test", action="store_true", help="bool determining whether or not to test")
+    parser.add_argument("--lr", type=float, default=0.001, help="network learning rate")
+    parser.add_argument("--validation", type=float, default=0.1, help="validation split for training data")
+    parser.add_argument("--batch", type=int, default=128, help="batch size for calculating loss")
+    parser.add_argument("--epochs", type=int, default=20, help="number of epochs to train")
+    parser.add_argument("--model", help="model to train and version number <model_name>_v<#>")
     args = parser.parse_args()
 
     if args.model and args.train:
@@ -96,7 +96,7 @@ def main():
         network = args.model.split('_')[0]
         verifyNetwork(network)
         nn = train(network, args.model, train_64_path, train_128_path, \
-                   float(args.lr), float(args.validation), int(args.batch), int(args.epochs))
+                   args.lr, args.validation, args.batch, args.epochs)
         if input("Would you like to test the model? y/n: ") == 'y':
             test(nn, test_64_path, result_path + network + "/")
     elif args.model and args.test:
