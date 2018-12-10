@@ -356,9 +356,11 @@ def testnet5(learningRate=0.001):
     deconv1 = BatchNormalization()(deconv1)
     deconv1 = PReLU(alpha_initializer='zeros')(deconv1)
 
-    conv = Conv2D(1, (5,5), padding='valid', activation='sigmoid', use_bias=True)(deconv1)
+    subpix = SubpixelConv2D(conv0.shape, scale=2)(conv0)
+    conv0 = Conv2D(1, (3,3), padding='valid', activation='tanh', use_bias=True)(subpix)
+    conv = Conv2D(1, (5,5), padding='valid', activation='tanh', use_bias=True)(deconv1)
 
-    y_output = conv
+    y_output = Add()([conv0,conv])
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
