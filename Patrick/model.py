@@ -5,14 +5,10 @@ from keras.activations import relu
 from keras.models import Model, load_model
 from keras.optimizers import Adam
 from keras.callbacks import Callback
-from keras import backend as K
 import h5py
 
 from subpixel import SubpixelConv2D
-
-_EPSILON = K.epsilon()
-_W = 128
-_H = 128
+import loss
 
 #########################################################
 # Super Resolution CNN (SRCNN)
@@ -30,7 +26,7 @@ def srcnn(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=loss.loss.rmse, metrics=['accuracy'])
     return model
 
 #########################################################
@@ -50,7 +46,7 @@ def subpixelsrcnn(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=loss.rmse, metrics=['accuracy'])
     return model
 
 #########################################################
@@ -75,7 +71,7 @@ def esrcnn(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=loss.rmse, metrics=['accuracy'])
     return model
 
 #########################################################
@@ -103,7 +99,7 @@ def dsrcnn(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=loss.rmse, metrics=['accuracy'])
     return model
 
 #########################################################
@@ -141,7 +137,7 @@ def resnet(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=loss.rmse, metrics=['accuracy'])
     return model
 
 #########################################################
@@ -174,7 +170,7 @@ def testnet(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=loss.rmse, metrics=['accuracy'])
     return model
 
 #########################################################
@@ -213,7 +209,7 @@ def testnet2(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=loss.rmse, metrics=['accuracy'])
     return model
 
 #########################################################
@@ -257,7 +253,7 @@ def testnet3(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=loss.rmse, metrics=['accuracy'])
     return model
 
 #########################################################
@@ -304,94 +300,17 @@ def testnet4(learningRate=0.001):
     subpix1_1 = SubpixelConv2D(conv1_2.shape, scale=2, name='subpix2')(relu6)
 
     add3 = Add()([subpix1_1, subpix])
-    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='sigmoid')(add3)
+    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='relu')(add3)
 
     y_output = conv4
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse)
+    model.compile(optimizer=adam, loss=loss.rmse)
     return model
-
-#########################################################
-# test 5
-#########################################################
-
-def testnet5(learningRate=0.001):
-    print('Creating model of architecture \'testnet5\'')
-    x_input = Input((64, 64, 1))
-
-    conv0 = Conv2D(64, (5,5), padding='same', use_bias=True)(x_input)
-    conv0 = BatchNormalization()(conv0)
-    conv0 = PReLU(alpha_initializer='zeros')(conv0)
-
-    conv1 = Conv2D(64, (7,7), padding='same', use_bias=True)(conv0)
-    conv1 = BatchNormalization()(conv1)
-    conv1 = PReLU(alpha_initializer='zeros')(conv1)
-
-    conv2 = Conv2D(64, (5,5), padding='same', use_bias=True)(conv1)
-    conv2 = BatchNormalization()(conv2)
-    conv2 = PReLU(alpha_initializer='zeros')(conv2)
-
-    conv3 = Conv2D(64, (3,3), padding='same', use_bias=True)(conv2)
-    conv3 = BatchNormalization()(conv3)
-    conv3 = PReLU(alpha_initializer='zeros')(conv3)
-
-    deconv3 = Deconv2D(64, (3,3), padding='same', use_bias=True)(conv3)
-    deconv3 = BatchNormalization()(deconv3)
-    deconv3 = PReLU(alpha_initializer='zeros')(deconv3)
-    deconv3 = Add()([conv2,deconv3])
-
-    deconv2 = Deconv2D(64, (5,5), padding='same', use_bias=True)(deconv3)
-    deconv2 = BatchNormalization()(deconv2)
-    deconv2 = PReLU(alpha_initializer='zeros')(deconv2)
-    deconv2 = Add()([conv1,deconv2])
-
-    deconv1 = Deconv2D(64, (7,7), padding='same', use_bias=True)(deconv2)
-    deconv1 = BatchNormalization()(deconv1)
-    deconv1 = PReLU(alpha_initializer='zeros')(deconv1)
-    deconv1 = Add()([conv0,deconv1])
-
-    deconv0 = Deconv2D(32, (5,5), strides=(2,2), output_padding=(1,1), padding='valid', use_bias=True)(deconv1)
-    deconv0 = BatchNormalization()(deconv0)
-    deconv0 = PReLU(alpha_initializer='zeros')(deconv0)
-
-    subpix = SubpixelConv2D(conv0.shape, scale=2)(deconv1)
-    conv0 = Conv2D(1, (3,3), padding='same', activation='tanh', use_bias=True)(subpix)
-    conv = Conv2D(1, (5,5), padding='valid', activation='tanh', use_bias=True)(deconv0)
-
-    y_output = Add()([conv0,conv])
-
-    model = Model(x_input, y_output)
-    adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse)
-    return model
-
-def rmse(y_true, y_pred):
-    diff = K.square(255 * (y_pred - y_true))
-    return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
-
-img_nrows = 128
-img_ncols = 128
-def total_variation_loss(dc, x):
-    assert K.ndim(x) == 4
-    if K.image_data_format() == 'channels_first':
-        a = K.abs(
-            x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, 1:, :img_ncols - 1])
-        b = K.abs(
-            x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, :img_nrows - 1, 1:])
-    else:
-        a = K.abs(
-            x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, 1:, :img_ncols - 1, :])
-        b = K.abs(
-            x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, :img_nrows - 1, 1:, :])
-    return 4e-3 * (K.sum(K.sum(a, axis=[1,2,3]) + K.sum(b, axis=[1,2,3])))
-
-def custom_loss(y_true, y_pred):
-    return rmse(y_true, y_pred) + total_variation_loss(y_true, y_pred)
 
 def loadModel(modelName):
-    return load_model(modelName, custom_objects={'rmse': rmse})
+    return load_model(modelName, custom_objects={'rmse': loss.rmse})
     #return load_model(modelName)
 
 def saveModel(model, modelName):
@@ -411,7 +330,6 @@ lookUp['test'] = testnet
 lookUp['test2'] = testnet2
 lookUp['test3'] = testnet3
 lookUp['test4'] = testnet4
-lookUp['test5'] = testnet5
 
 if __name__ == "__main__":
     print('test model')
@@ -422,5 +340,4 @@ if __name__ == "__main__":
     #lookUp['resnet']().summary()
     #lookUp['test'](0.003).summary()
     #lookUp['test3'](0.003).summary()
-    #lookUp['test4'](0.003).summary()
-    lookUp['test5'](0.003).summary()
+    lookUp['test4'](0.003).summary()
