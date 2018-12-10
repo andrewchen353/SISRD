@@ -269,42 +269,42 @@ def testnet4(learningRate=0.001):
     x_input = Input((64, 64, 1))
 
     conv1 = Conv2D(64, (5,5), padding='same', use_bias=True)(x_input)
-    batch = BatchNormalization(axis=0)(conv1)
+    batch = BatchNormalization()(conv1)
     relu1 = PReLU(alpha_initializer='zeros')(conv1)
     conv2 = Conv2D(64, (3,3), padding='same', use_bias=True)(relu1)
-    batch = BatchNormalization(axis=0)(conv2)
+    batch = BatchNormalization()(conv2)
     relu2 = PReLU(alpha_initializer='zeros')(conv2)
     conv2_1 = Conv2D(64, (3,3), padding='same', use_bias=True)(relu2)
-    batch = BatchNormalization(axis=0)(conv2_1)
+    batch = BatchNormalization()(conv2_1)
     relu2_1 = PReLU(alpha_initializer='zeros')(conv2_1)
 
     deconv = Deconv2D(64, (3,3), padding='same', use_bias=True)(relu2_1)
-    batch = BatchNormalization(axis=0)(deconv)
+    batch = BatchNormalization()(deconv)
     relu3 = PReLU(alpha_initializer='zeros')(deconv)
     add1 = Add()([relu2_1, relu3])
 
     deconv2 = Deconv2D(64, (3,3), padding='same', use_bias=True)(add1)
-    batch = BatchNormalization(axis=0)(deconv2)
+    batch = BatchNormalization()(deconv2)
     relu4 = PReLU(alpha_initializer='zeros')(deconv2)
     add2 = Add()([relu4, relu2])
 
     deconv2_1 = Deconv2D(64, (3,3), padding='same', use_bias=True)(add2)
-    batch = BatchNormalization(axis=0)(deconv2_1)
+    batch = BatchNormalization()(deconv2_1)
     relu4_1 = PReLU(alpha_initializer='zeros')(deconv2_1)
     add2_1 = Add()([relu4_1, relu1])
 
     conv3 = Conv2D(32, (3,3), padding='same', use_bias=True)(add2_1)
-    batch = BatchNormalization(axis=0)(conv3)
+    batch = BatchNormalization()(conv3)
     relu5 = PReLU(alpha_initializer='zeros')(conv3)
     subpix = SubpixelConv2D(relu4.shape, scale=2, name='subpix1')(relu5)
 
     conv1_2 = Conv2D(32, (3,3), padding='same', use_bias=True)(x_input)
-    batch = BatchNormalization(axis=0)(conv1_2)
+    batch = BatchNormalization()(conv1_2)
     relu6 = PReLU(alpha_initializer='zeros')(conv1_2)
     subpix1_1 = SubpixelConv2D(conv1_2.shape, scale=2, name='subpix2')(relu6)
 
     add3 = Add()([subpix1_1, subpix])
-    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='relu')(add3)
+    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='sigmoid')(add3)
 
     y_output = conv4
 
