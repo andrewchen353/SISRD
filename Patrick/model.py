@@ -260,6 +260,51 @@ def testnet3(learningRate=0.001):
     model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
     return model
 
+#########################################################
+# test 4
+#########################################################
+
+def testnet4(learningRate=0.001):
+    print('Creating model of architecture \'testnet2\'')
+    x_input = Input((64, 64, 1))
+
+    conv1 = Conv2D(64, (5,5), padding='same', use_bias=True)(x_input)
+    relu1 = PReLU(alpha_initializer='zeros')(conv1)
+    conv2 = Conv2D(64, (3,3), padding='same', use_bias=True)(relu1)
+    relu2 = PReLU(alpha_initializer='zeros')(conv2)
+    conv2_1 = Conv2D(64, (3,3), padding='same', use_bias=True)(relu2)
+    relu2_1 = PReLU(alpha_initializer='zeros')(conv2_1)
+
+    deconv = Deconv2D(64, (3,3), padding='same', use_bias=True)(relu2_1)
+    relu3 = PReLU(alpha_initializer='zeros')(deconv)
+    add1 = Add()([relu2_1, relu3])
+
+    deconv2 = Deconv2D(64, (3,3), padding='same', use_bias=True)(add1)
+    relu4 = PReLU(alpha_initializer='zeros')(deconv2)
+    add2 = Add()([relu4, relu2])
+
+    deconv2_1 = Deconv2D(64, (3,3), padding='same', use_bias=True)(add2)
+    relu4_1 = PReLU(alpha_initializer='zeros')(deconv2_1)
+    add2_1 = Add()([relu4_1, relu1])
+
+    conv3 = Conv2D(32, (3,3), padding='same', use_bias=True)(add2_1)
+    relu5 = PReLU(alpha_initializer='zeros')(conv3)
+    subpix = SubpixelConv2D(relu4.shape, scale=2, name='subpix1')(relu5)
+
+    conv1_2 = Conv2D(32, (3,3), padding='same', use_bias=True)(x_input)
+    relu6 = PReLU(alpha_initializer='zeros')(conv1_2)
+    subpix1_1 = SubpixelConv2D(conv1_2.shape, scale=2, name='subpix2')(relu6)
+
+    add3 = Add()([subpix1_1, subpix])
+    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='relu')(add3)
+
+    y_output = conv4
+
+    model = Model(x_input, y_output)
+    adam = Adam(lr=learningRate)
+    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    return model
+
 def rmse(y_true, y_pred):
     diff = K.square(255 * (y_pred - y_true))
     return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
@@ -284,6 +329,7 @@ lookUp['resnet'] = resnet
 lookUp['test'] = testnet
 lookUp['test2'] = testnet2
 lookUp['test3'] = testnet3
+lookUp['test4'] = testnet4
 
 if __name__ == "__main__":
     print('test model')
@@ -293,4 +339,5 @@ if __name__ == "__main__":
     #lookUp['dsrcnn'](0.003).summary()
     #lookUp['resnet']().summary()
     #lookUp['test'](0.003).summary()
-    lookUp['test3'](0.003).summary()
+    #lookUp['test3'](0.003).summary()
+    lookUp['test4'](0.003).summary()
