@@ -1,7 +1,8 @@
 import numpy as np
 import loss
 from subpixel import SubpixelConv2D
-from keras.layers import Add, Subtract, Average, Input, Conv2D, Deconv2D, MaxPooling2D, UpSampling2D, PReLU, BatchNormalization
+from keras.layers import Add, Subtract, Average, Input, Conv2D, Deconv2D, Lambda, Activation
+from keras.layers import MaxPooling2D, UpSampling2D, PReLU, LeakyReLU, BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, load_model
 
@@ -167,40 +168,86 @@ def TEST(lr):
 
     return model
 
-######################################################
-# Implementing DSRCNNx2
-######################################################
-def DSRCNNx2(lr):
+def TEST2(lr):
     x_input = Input((64, 64, 1))
 
-    conv1_1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
-    conv2_1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1_1)
-
-    conv1_2   = Conv2D  (64, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
-    conv2_2   = Conv2D  (64, (3, 3), padding='same', use_bias=True, activation='relu')(conv1_2)
-
-    DSRCNN_1 = subblock(conv2_1, 1)
-    DSRCNN_2 = subblock(conv2_2, 2)
-
-    avg = Average()([DSRCNN_1, DSRCNN_2])
-    conv1 = Conv2D(64, (5, 5), padding='same', use_bias=True, activation='relu')(avg)
-
-    model = Model(x_input, conv1)
-
-    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
-
-    return model
-
-def subblock(input,number):
-    deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(input)
+    conv1   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
+    conv2   = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(conv1)
+    deconv1 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(conv2)
     
     add1    = Add()([conv2, deconv1])
     deconv2 = Deconv2D(64, (3, 3), padding='same', use_bias=True)(add1)
     
     add2  = Add()([conv1, deconv2])
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
-    spc1  = SubpixelConv2D(conv3.shape, name='spc'+str(number), scale=2)(conv3)
-    return spc1
+    spc1  = SubpixelConv2D(conv3.shape, name='spc1', scale=2)(conv3)
+
+    conv1_1 = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
+    spc2  = SubpixelConv2D(conv1_1.shape, name='spc2', scale=2)(conv1_1)
+
+    sub1  = Subtract()([spc2, spc1])
+    conv4 = Conv2D(1, (1, 1), padding='same', use_bias=True, activation='relu')(sub1)
+
+    model = Model(x_input, conv4)
+
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
+
+    return model
+
+def ResNet(lr):
+    depth = 16 #v2, v1 = 4
+    x_input = Input((64, 64, 1))
+
+    conv1  = Conv2D(1, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
+    # rec = PReLU(alpha_initializer='zeros')(conv1) #v1
+    rec = PReLU(alpha_initializer='zeros')(conv1) #v2
+
+    # DnCNN network
+    for i in range(depth):
+        rec1  = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
+        rec1 = BatchNormalization(axis=3)(rec1)
+        # rec = PReLU(alpha_initializer='zeros')(rec) #v1
+        rec1 = LeakyReLU(alpha=0.3)(rec1) #v2
+        if i%2 == 0:
+            rec = Add()([rec, rec1])
+        rec = Add()([rec1, rec])
+    
+    conv2 = Conv2D(1, (3, 3), padding='same', use_bias=True, activation='relu')(rec)
+    sub = Add()([x_input, conv2])
+
+    conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(sub)
+    spc1 = SubpixelConv2D(conv3.shape, scale=2)(conv3)
+
+    # model = Model(spc1, x_input) #v1
+    model = Model(x_input, spc1) #v2
+
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
+
+    return model
+
+# https://arxiv.org/pdf/1706.00552.pdf
+def IDCNN(lr):
+    x_input = Input((64, 64, 1))
+
+    conv1 = Conv2D(1 , (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
+    loop = conv1
+
+    for i in range(6):
+        conv2 = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(loop)
+        loop  = BatchNormalization(axis=3)(conv2)
+
+    conv3  = Conv2D(64, (3, 3), padding='same', use_bias=True, activation='relu')(loop)
+    div    = Lambda(lambda inputs: inputs[0]/(inputs[1] + 1e-7))([x_input, conv3])
+    tanh1  = Activation('tanh')(div)
+    # conv4  = Conv2D(4, (3, 3), padding='same', use_bias=True)(tanh1)
+    spc1   = SubpixelConv2D(conv3.shape, scale=2)(tanh1)
+
+    model = Model(x_input, spc1) #v2
+
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
+
+    return model
+    
 
 def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
@@ -212,7 +259,9 @@ lookup['DSRCNN']   = DSRCNN
 lookup['DDSRCNN']  = DDSRCNN
 lookup['SRResNet'] = SRResNet
 lookup['TEST']     = TEST
-lookup['DSRCNNx2'] = DSRCNNx2
+lookup['ResNet']   = ResNet
+lookup['TEST2']    = TEST2
+lookup['IDCNN']    = IDCNN
 
 if __name__ == "__main__":
     cnndae   = lookup['CNNDAE'](0.001)
@@ -220,5 +269,7 @@ if __name__ == "__main__":
     ddsrcnn  = lookup['DDSRCNN'](0.001)
     srresnet = lookup['SRResNet'](0.001)
     test     = lookup['TEST'](0.001)
-    dsrcnnx2 = lookup['DSRCNNx2'](0.001)
-    dsrcnnx2.summary()
+    resnet   = lookup['ResNet'](0.001)
+    test2    = lookup['TEST2'](0.001)
+    idcnn    = lookup['IDCNN'](0.001)
+    idcnn.summary()
