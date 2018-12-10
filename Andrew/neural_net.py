@@ -182,13 +182,12 @@ def TEST2(lr):
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
     spc1  = SubpixelConv2D(conv3.shape, name='spc1', scale=2)(conv3)
 
-    conv1_1 = Conv2D  (64, (5, 5), padding='same', use_bias=True, activation='relu')(x_input)
-    spc2  = SubpixelConv2D(conv1_1.shape, name='spc2', scale=2)(conv1_1)
+    conv1_1 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
+    spc2    = SubpixelConv2D(conv1_1.shape, name='spc2', scale=2)(conv1_1)
 
-    sub1  = Subtract()([spc2, spc1])
-    conv4 = Conv2D(1, (1, 1), padding='same', use_bias=True, activation='relu')(sub1)
+    sub = Subtract()([spc2, spc1])
 
-    model = Model(x_input, conv4)
+    model = Model(x_input, sub)
 
     model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
@@ -272,4 +271,4 @@ if __name__ == "__main__":
     resnet   = lookup['ResNet'](0.001)
     test2    = lookup['TEST2'](0.001)
     idcnn    = lookup['IDCNN'](0.001)
-    idcnn.summary()
+    test2.summary()
