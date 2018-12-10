@@ -62,7 +62,8 @@ def DSRCNN(lr):
 
     model = Model(x_input, spc1)
 
-    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy']) # v1 -> lr=0.003, v2 -> lr=0.001
+    #model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy']) # v1 -> lr=0.003, v2 -> lr=0.001
+    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=[loss.total_variation_loss, loss.rmse])
 
     return model
 
@@ -180,14 +181,12 @@ def TEST2(lr):
     
     add2  = Add()([conv1, deconv2])
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
-    spc1  = SubpixelConv2D(conv3.shape, name='spc1', scale=2)(conv3)
 
     conv1_1 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
-    spc2    = SubpixelConv2D(conv1_1.shape, name='spc2', scale=2)(conv1_1)
+    add     = Add()([conv1_1, conv3])
+    spc     = SubpixelConv2D(add.shape, scale=2)(add)
 
-    sub = Subtract()([spc2, spc1])
-
-    model = Model(x_input, sub)
+    model = Model(x_input, spc)
 
     model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
@@ -271,4 +270,4 @@ if __name__ == "__main__":
     resnet   = lookup['ResNet'](0.001)
     test2    = lookup['TEST2'](0.001)
     idcnn    = lookup['IDCNN'](0.001)
-    test2.summary()
+    dsrcnn.summary()
