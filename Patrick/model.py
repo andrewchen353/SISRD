@@ -302,12 +302,26 @@ def testnet4(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=rmse, metrics=['accuracy'])
+    model.compile(optimizer=adam, loss=total_variation_loss, metrics=[rmse])
     return model
 
 def rmse(y_true, y_pred):
     diff = K.square(255 * (y_pred - y_true))
     return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
+
+def total_variation_loss(x):
+    assert K.ndim(x) == 4
+    if K.image_data_format() == 'channels_first':
+        a = K.square(
+            x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, 1:, :img_ncols - 1])
+        b = K.square(
+            x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, :img_nrows - 1, 1:])
+    else:
+        a = K.square(
+            x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, 1:, :img_ncols - 1, :])
+        b = K.square(
+            x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, :img_nrows - 1, 1:, :])
+    return K.sum(K.pow(a + b, 0.00125))
 
 def loadModel(modelName):
     return load_model(modelName, custom_objects={'rmse': rmse})
