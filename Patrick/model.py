@@ -302,26 +302,31 @@ def testnet4(learningRate=0.001):
 
     model = Model(x_input, y_output)
     adam = Adam(lr=learningRate)
-    model.compile(optimizer=adam, loss=total_variation_loss, metrics=[rmse])
+    model.compile(optimizer=adam, loss=custom_loss, metrics=[rmse])
     return model
 
 def rmse(y_true, y_pred):
     diff = K.square(255 * (y_pred - y_true))
     return K.sum(K.sqrt(K.sum(diff, axis=(2,1)) / (_W * _H)))
 
-def total_variation_loss(x):
+img_nrows = 128
+img_ncols = 128
+def total_variation_loss(dc, x):
     assert K.ndim(x) == 4
     if K.image_data_format() == 'channels_first':
-        a = K.square(
+        a = K.abs(
             x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, 1:, :img_ncols - 1])
-        b = K.square(
+        b = K.abs(
             x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, :img_nrows - 1, 1:])
     else:
-        a = K.square(
+        a = K.abs(
             x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, 1:, :img_ncols - 1, :])
-        b = K.square(
+        b = K.abs(
             x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, :img_nrows - 1, 1:, :])
-    return K.sum(K.pow(a + b, 0.00125))
+    return 4e-3 * (K.sum(K.sum(a, axis=[1,2,3]) + K.sum(b, axis=[1,2,3])))
+
+def custom_loss(y_true, y_pred):
+    return rmse(y_true, y_pred) + total_variation_loss(y_true, y_pred)
 
 def loadModel(modelName):
     return load_model(modelName, custom_objects={'rmse': rmse})
