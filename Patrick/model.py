@@ -325,40 +325,40 @@ def testnet5(learningRate=0.001):
     conv0 = BatchNormalization()(conv0)
     conv0 = PReLU(alpha_initializer='zeros')(conv0)
 
-    conv1 = Conv2D(64, (7,7), padding='valid', use_bias=True)(conv0)
+    conv1 = Conv2D(64, (7,7), padding='same', use_bias=True)(conv0)
     conv1 = BatchNormalization()(conv1)
     conv1 = PReLU(alpha_initializer='zeros')(conv1)
 
-    conv2 = Conv2D(64, (5,5), padding='valid', use_bias=True)(conv1)
+    conv2 = Conv2D(64, (5,5), padding='same', use_bias=True)(conv1)
     conv2 = BatchNormalization()(conv2)
     conv2 = PReLU(alpha_initializer='zeros')(conv2)
 
-    conv3 = Conv2D(64, (3,3), padding='valid', use_bias=True)(conv2)
+    conv3 = Conv2D(64, (3,3), padding='same', use_bias=True)(conv2)
     conv3 = BatchNormalization()(conv3)
     conv3 = PReLU(alpha_initializer='zeros')(conv3)
 
-    deconv3 = Deconv2D(64, (3,3), padding='valid', use_bias=True)(conv3)
+    deconv3 = Deconv2D(64, (3,3), padding='same', use_bias=True)(conv3)
     deconv3 = BatchNormalization()(deconv3)
     deconv3 = PReLU(alpha_initializer='zeros')(deconv3)
     deconv3 = Add()([conv2,deconv3])
 
-    deconv2 = Deconv2D(64, (5,5), padding='valid', use_bias=True)(deconv3)
+    deconv2 = Deconv2D(64, (5,5), padding='same', use_bias=True)(deconv3)
     deconv2 = BatchNormalization()(deconv2)
     deconv2 = PReLU(alpha_initializer='zeros')(deconv2)
     deconv2 = Add()([conv1,deconv2])
 
-    deconv1 = Deconv2D(64, (7,7), padding='valid', use_bias=True)(deconv2)
+    deconv1 = Deconv2D(64, (7,7), padding='same', use_bias=True)(deconv2)
     deconv1 = BatchNormalization()(deconv1)
     deconv1 = PReLU(alpha_initializer='zeros')(deconv1)
     deconv1 = Add()([conv0,deconv1])
 
-    deconv1 = Deconv2D(32, (5,5), strides=(2,2), output_padding=(1,1), padding='valid', use_bias=True)(deconv1)
-    deconv1 = BatchNormalization()(deconv1)
-    deconv1 = PReLU(alpha_initializer='zeros')(deconv1)
+    deconv0 = Deconv2D(32, (5,5), strides=(2,2), output_padding=(1,1), padding='valid', use_bias=True)(deconv1)
+    deconv0 = BatchNormalization()(deconv0)
+    deconv0 = PReLU(alpha_initializer='zeros')(deconv0)
 
-    subpix = SubpixelConv2D(conv0.shape, scale=2)(conv0)
+    subpix = SubpixelConv2D(conv0.shape, scale=2)(deconv1)
     conv0 = Conv2D(1, (3,3), padding='same', activation='tanh', use_bias=True)(subpix)
-    conv = Conv2D(1, (5,5), padding='valid', activation='tanh', use_bias=True)(deconv1)
+    conv = Conv2D(1, (5,5), padding='valid', activation='tanh', use_bias=True)(deconv0)
 
     y_output = Add()([conv0,conv])
 
