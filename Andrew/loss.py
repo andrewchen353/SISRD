@@ -25,3 +25,6 @@ def total_variation_loss(dc, x):
         b = K.square(
             x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, :img_nrows - 1, 1:, :])
     return K.sum(K.pow(a + b, 1e-3))
+
+def custom_loss(y_true, y_pred):
+    return rmse(y_true, y_pred) + 1e-3 * total_variation_loss(y_true, y_pred)
