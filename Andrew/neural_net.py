@@ -180,14 +180,12 @@ def TEST2(lr):
     
     add2  = Add()([conv1, deconv2])
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
-    spc1  = SubpixelConv2D(conv3.shape, name='spc1', scale=2)(conv3)
 
     conv1_1 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
-    spc2    = SubpixelConv2D(conv1_1.shape, name='spc2', scale=2)(conv1_1)
+    sub     = Subtract()([conv1_1, conv3])
+    spc     = SubpixelConv2D(sub.shape, scale=2)(sub)
 
-    sub = Subtract()([spc2, spc1])
-
-    model = Model(x_input, sub)
+    model = Model(x_input, spc)
 
     model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
