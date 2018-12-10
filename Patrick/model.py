@@ -202,12 +202,12 @@ def testnet2(learningRate=0.001):
     relu5 = PReLU(alpha_initializer='zeros', name='relu5')(conv3)
     subpix = SubpixelConv2D(relu4.shape, scale=2, name='subpix1')(relu5)
 
-    conv1_2 = Conv2D(32, (1,1), padding='same', use_bias=True, name='conv1_2')(x_input)
+    conv1_2 = Conv2D(32, (3,3), padding='same', use_bias=True, name='conv1_2')(x_input)
     relu6 = PReLU(alpha_initializer='zeros', name='relu6')(conv1_2)
     subpix1_1 = SubpixelConv2D(conv1_2.shape, scale=2, name='subpix1_1')(relu6)
 
-    add3 = Subtract()([subpix1_1, subpix])
-    conv4 = Conv2D(1 , (1,1), padding='same', use_bias=True, activation='relu', name='conv4')(add3)
+    add3 = Add()([subpix1_1, subpix])
+    conv4 = Conv2D(1 , (3,3), padding='same', use_bias=True, activation='relu', name='conv4')(add3)
 
     y_output = conv4
 
