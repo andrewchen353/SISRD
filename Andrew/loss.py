@@ -12,19 +12,19 @@ def rmse(y_true, y_pred):
 
 # from https://github.com/keras-team/keras/blob/master/examples/neural_style_transfer.py
 # x is y_pred
-def total_variation_loss(dc, x):
+def total_variation_loss(x):
     assert K.ndim(x) == 4
     if K.image_data_format() == 'channels_first':
-        a = K.square(
+        a = K.abs(
             x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, 1:, :img_ncols - 1])
-        b = K.square(
+        b = K.abs(
             x[:, :, :img_nrows - 1, :img_ncols - 1] - x[:, :, :img_nrows - 1, 1:])
     else:
-        a = K.square(
+        a = K.abs(
             x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, 1:, :img_ncols - 1, :])
-        b = K.square(
+        b = K.abs(
             x[:, :img_nrows - 1, :img_ncols - 1, :] - x[:, :img_nrows - 1, 1:, :])
-    return K.sum(K.pow(a + b, 0.5))
+    return K.sum(K.sum(a, axis=[1,2,3]) + K.sum(b, axis=[1,2,3]))
 
 def custom_loss(y_true, y_pred):
     return rmse(y_true, y_pred) + 1e-3 * total_variation_loss(y_true, y_pred)
