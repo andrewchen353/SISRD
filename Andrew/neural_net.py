@@ -63,7 +63,7 @@ def DSRCNN(lr):
     model = Model(x_input, spc1)
 
     #model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy']) # v1 -> lr=0.003, v2 -> lr=0.001
-    model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=[loss.total_variation_loss, loss.rmse])
+    model.compile(loss=loss.custom_loss, optimizer=Adam(lr=lr), metrics=[loss.total_variation_loss, loss.rmse])
 
     return model
 
