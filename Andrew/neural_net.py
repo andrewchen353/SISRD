@@ -63,6 +63,7 @@ def DSRCNN(lr):
     model = Model(x_input, spc1)
 
     model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy']) # v1 -> lr=0.003, v2 -> lr=0.001
+    model.compile(loss=loss.total_variation_loss, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
     return model
 
@@ -182,8 +183,8 @@ def TEST2(lr):
     conv3 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(add2)
 
     conv1_1 = Conv2D(4, (3, 3), padding='same', use_bias=True, activation='relu')(x_input)
-    sub     = Subtract()([conv1_1, conv3])
-    spc     = SubpixelConv2D(sub.shape, scale=2)(sub)
+    add     = Add()([conv1_1, conv3])
+    spc     = SubpixelConv2D(add.shape, scale=2)(add)
 
     model = Model(x_input, spc)
 
@@ -269,4 +270,4 @@ if __name__ == "__main__":
     resnet   = lookup['ResNet'](0.001)
     test2    = lookup['TEST2'](0.001)
     idcnn    = lookup['IDCNN'](0.001)
-    test2.summary()
+    dsrcnn.summary()
