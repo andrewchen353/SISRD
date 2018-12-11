@@ -1,6 +1,6 @@
 import numpy as np
-from keras.layers import Input, Subtract, Add, Conv2D, Deconv2D
-from keras.layers import UpSampling2D, BatchNormalization, LeakyReLU, PReLU
+from keras.layers import Input, Subtract, Add, Conv2D, Deconv2D, Flatten, Reshape
+from keras.layers import UpSampling2D, BatchNormalization, LeakyReLU, PReLU, Dense
 from keras.activations import relu
 from keras.models import Model, load_model
 from keras.optimizers import Adam
@@ -309,6 +309,41 @@ def testnet4(learningRate=0.001):
     model.compile(optimizer=adam, loss=loss.rmse)
     return model
 
+#########################################################
+# test 5
+#########################################################
+
+def testnet5(learningRate=0.001):
+    print('Creating model of architecture \'testnet5\'')
+    x_input = Input((64, 64, 1))
+
+    conv1 = Conv2D(64, (5,5), padding='same', use_bias=True, name='conv1')(x_input)
+    conv1 = PReLU(alpha_initializer='zeros')(conv1)
+    conv2 = Conv2D(64, (3,3), padding='same', use_bias=True, name='conv2')(conv1)
+    conv2 = PReLU(alpha_initializer='zeros')(conv2)
+
+    deconv = Deconv2D(64, (3,3), padding='same', use_bias=True, name='deconv')(conv2)
+    deconv = PReLU(alpha_initializer='zeros')(deconv)
+    add1 = Add()([deconv, conv2])
+
+    deconv2 = Deconv2D(64, (3,3), padding='same', use_bias=True, name='deconv2')(add1)
+    deconv2 = PReLU(alpha_initializer='zeros')(deconv2)
+    add2 = Add()([deconv2, conv1])
+
+    conv3 = Conv2D(32 , (3,3), padding='same', use_bias=True, name='conv3')(add2)
+    conv3 = PReLU(alpha_initializer='zeros')(conv3)
+    flat = Flatten()(conv3)
+    flat = Dense(128 * 128, activation='sigmoid', use_bias=True)(flat)
+    flat = Reshape((128,128,1))(flat)
+
+    y_output = flat
+    #print(y_output.shape)
+
+    model = Model(x_input, y_output)
+    adam = Adam(lr=learningRate)
+    model.compile(optimizer=adam, loss=loss.rmse, metrics=[loss.rmse])
+    return model
+
 def loadModel(modelName):
     return load_model(modelName, custom_objects={'rmse': loss.rmse})
     #return load_model(modelName)
@@ -330,6 +365,7 @@ lookUp['test'] = testnet
 lookUp['test2'] = testnet2
 lookUp['test3'] = testnet3
 lookUp['test4'] = testnet4
+lookUp['test5'] = testnet5
 
 if __name__ == "__main__":
     print('test model')
@@ -340,4 +376,5 @@ if __name__ == "__main__":
     #lookUp['resnet']().summary()
     #lookUp['test'](0.003).summary()
     #lookUp['test3'](0.003).summary()
-    lookUp['test4'](0.003).summary()
+    #lookUp['test4'](0.003).summary()
+    lookUp['test5']()
