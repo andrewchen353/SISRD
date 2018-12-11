@@ -245,7 +245,19 @@ def IDCNN(lr):
     model.compile(loss=loss.rmse, optimizer=Adam(lr=lr), metrics=['accuracy'])
 
     return model
-    
+
+def SIMPLE(lr):
+    x_input = Input((64, 64, 1))
+
+    conv1 = Conv2D(4, (5, 5), padding='same', use_bias=True, activation='sigmoid')(x_input)
+    spc = SubpixelConv2D(conv1.shape, scale=2)(conv1)
+
+    model = Model(x_input, spc)
+
+    model.compile(loss=loss.custom_loss, optimizer=Adam(lr=lr), metrics=[loss.total_variation_loss, loss.rmse])
+
+    return model
+
 
 def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
@@ -260,6 +272,7 @@ lookup['TEST']     = TEST
 lookup['ResNet']   = ResNet
 lookup['TEST2']    = TEST2
 lookup['IDCNN']    = IDCNN
+lookup['SIMPLE']   = SIMPLE
 
 if __name__ == "__main__":
     cnndae   = lookup['CNNDAE'](0.001)
@@ -270,4 +283,5 @@ if __name__ == "__main__":
     resnet   = lookup['ResNet'](0.001)
     test2    = lookup['TEST2'](0.001)
     idcnn    = lookup['IDCNN'](0.001)
-    dsrcnn.summary()
+    simple   = lookup['SIMPLE'](0.001)
+    simple.summary()
