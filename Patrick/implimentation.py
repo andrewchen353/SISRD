@@ -58,31 +58,20 @@ def model64():
 	model.compile(optimizer=adam, loss=loss.rmse, metrics=[loss.rmse])
 	return model
 
-def model128():
-	print('Creating model of architecture \'model128\'')
-	x_input = Input((128, 128, 1))
+def model128(learningRate=0.003):
+    print('Creating model of architecture \'model128\'')
+    x_input = Input((128, 128, 1))
 
-	conv1 = Conv2D(64, (5,5), padding='same', use_bias=True, name='conv1')(x_input)
-	relu1 = PReLU(alpha_initializer='zeros', name='relu1')(conv1)
-	conv2 = Conv2D(64, (3,3), padding='same', use_bias=True, name='conv2')(relu1)
-	relu2 = PReLU(alpha_initializer='zeros', name='relu2')(conv2)
+    conv1 = Conv2D(64, (9,9), padding='same', use_bias=True, activation='relu', name='conv1')(x_input)
+    conv2 = Conv2D(32, (5,5), padding='same', use_bias=True, activation='relu', name='conv2')(conv1)
+    conv3 = Conv2D(1 , (5,5), padding='same', use_bias=True, activation='relu', name='conv3')(conv2)
 
-	deconv = Deconv2D(64, (3,3), padding='same', use_bias=True, name='deconv')(relu2)
-	relu3 = PReLU(alpha_initializer='zeros', name='relu3')(deconv)
-	add1 = Add()([relu2, relu3])
+    y_output = conv3
 
-	deconv2 = Deconv2D(64, (3,3), padding='same', use_bias=True, name='deconv2')(add1)
-	relu4 = PReLU(alpha_initializer='zeros', name='relu4')(deconv2)
-	add2 = Add()([relu4, relu1])
-
-	conv3 = Conv2D(32, (3,3), padding='same', activation='relu', use_bias=True, name='conv3')(add2)
-
-	y_output = conv3
-
-	model = Model(x_input, y_output)
-	adam = Adam(lr=0.003)
-	model.compile(optimizer=adam, loss=loss.rmse, metrics=[loss.rmse])
-	return model
+    model = Model(x_input, y_output)
+    adam = Adam(lr=learningRate)
+    model.compile(optimizer=adam, loss=loss.loss.rmse, metrics=['accuracy'])
+    return model
 
 def main():
 	training_input = data_utils.load_data(training_input_dir)
