@@ -7,3 +7,7 @@
 [Image-to-Image Translation with Conditional Adversarial Networks](https://arxiv.org/pdf/1611.07004.pdf)
 
 [Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network](https://arxiv.org/pdf/1609.05158.pdf)
+
+[Patch Confidence k-Nearest Neighbors Denoising](https://hal.archives-ouvertes.fr/hal-00518078/document)
+
+[Image denoising with k-nearest neighbor and support vector regression](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=1699598)
