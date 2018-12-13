@@ -316,24 +316,8 @@ def testnet4(learningRate=0.001):
 def testnet5(learningRate=0.001):
     print('Creating model of architecture \'testnet5\'')
     x_input = Input((64, 64, 1))
-
-    conv1 = Conv2D(64, (5,5), padding='same', use_bias=True, name='conv1')(x_input)
-    conv1 = PReLU(alpha_initializer='zeros')(conv1)
-    conv2 = Conv2D(64, (3,3), padding='same', use_bias=True, name='conv2')(conv1)
-    conv2 = PReLU(alpha_initializer='zeros')(conv2)
-
-    deconv = Deconv2D(64, (3,3), padding='same', use_bias=True, name='deconv')(conv2)
-    deconv = PReLU(alpha_initializer='zeros')(deconv)
-    add1 = Add()([deconv, conv2])
-
-    deconv2 = Deconv2D(64, (3,3), padding='same', use_bias=True, name='deconv2')(add1)
-    deconv2 = PReLU(alpha_initializer='zeros')(deconv2)
-    add2 = Add()([deconv2, conv1])
-
-    conv3 = Conv2D(32 , (3,3), padding='same', use_bias=True, name='conv3')(add2)
-    conv3 = PReLU(alpha_initializer='zeros')(conv3)
-    flat = Flatten()(conv3)
-    flat = Dense(128 * 128, activation='sigmoid', use_bias=True)(flat)
+    flat = Flatten()(x_input)
+    flat = Dense(128 * 128, activation='relu', use_bias=True)(flat)
     flat = Reshape((128,128,1))(flat)
 
     y_output = flat
