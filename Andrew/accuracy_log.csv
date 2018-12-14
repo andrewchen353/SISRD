@@ -10,7 +10,9 @@ DSRCNN_v7,438.5451,435.1102,-,50,0.0001,64,0.15,"used custom loss, rmse = 320.94
 DSRCNN_v8,425.8888,424.0056,8615.117183472585,75,0.001,64,0.15,"used custom loss, rmse = 308.9255, val_rmse = 308.4812"
 DSRCNN_v9,426.3744,426.9339,-,150,0.001,64,0.15,"used custom loss, rmse = 309.5172, val_rmse = 309.2507"
 DSRCNN_v10,421.8395,420.5050,8556.14572346958,150,0.0005,64,0.15,"used custom loss, rmse = 304.6015, val_rmse = 304.7013"
-DSRCNN_v11,-,-,-,200,0.0005,64,0.15,"used custom loss, rmse = , val_rmse = "
+DSRCNN_v11,420.9305,423.4198,-,200,0.0005,64,0.15,"used custom loss, rmse = 303.9764, val_rmse = 304.2525"
+DSRCNN_v12,419.9104,418.396,8501.378332273052,250,0.0003,64,0.15,"used custom loss, rmse = 302.9092, val_rmse = 302.3607"
+DSRCNN_v13,-,-,-,400,0.0003,64,0.15,"used custom loss, rmse = , val_rmse = "
 SRResNet_v1,-,-,13000,10,-,-,-,used mean_squared_error
 SRResNet_v2,-,-,11906,40,-,-,-,used mean_squared_error
 SRResNet_v3,-,-,15701,40,-,-,-,usedAdded bn2 and add2
