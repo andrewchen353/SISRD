@@ -5,9 +5,9 @@ import argparse
 from os import makedirs
 from os.path import exists
 
-training_input_dir = 'xray_images/train_images_64x64/'
-training_output_dir = 'xray_images/train_images_128x128/'
-test_input_dir = 'xray_images/test_images_64x64/'
+training_input_dir = 'xray/train_images_64x64/'
+training_output_dir = 'xray/train_images_128x128/'
+test_input_dir = 'xray/test_images_64x64/'
 # test_output_dir = 'xray_images/test_images_128x128/'
 models_path = 'Patrick/models/'
 output_path = 'outputs/'
