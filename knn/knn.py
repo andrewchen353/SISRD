@@ -26,14 +26,24 @@ def main():
     _, hr_W, hr_H = train_output.shape
     test_output = np.zeros((numImages, hr_W, hr_H))
 
-    patches = 1
+    patches = 16
     lrInterval = int(lr_W / patches)
     hrInterval = int(hr_W / patches)
 
     print('Beginning knn...')
     for i in range(numImages):
-        index = np.argmin(np.linalg.norm(train_input - test_input[i,np.newaxis], axis=(2,1)))
-        test_output[i] = train_output[index]
+        for j in range(patches):
+            for k in range(patches):
+                rowStart = j * lrInterval
+                rowEnd = (j + 1) * lrInterval
+                colStart = k * lrInterval
+                colEnd = (k + 1) * lrInterval
+                index = np.argmin(np.linalg.norm(train_input[:,rowStart:rowEnd,colStart:colEnd] - test_input[i,rowStart:rowEnd,colStart:colEnd], axis=(2,1)))
+                rowStart = j * hrInterval
+                rowEnd = (j + 1) * hrInterval
+                colStart = k * hrInterval
+                colEnd = (k + 1) * hrInterval
+                test_output[i,rowStart:rowEnd,colStart:colEnd] = train_output[index,rowStart:rowEnd,colStart:colEnd]
         if i % 400 == 0:
             print('On image ' + str(i))
 
