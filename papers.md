@@ -11,3 +11,15 @@
 [Patch Confidence k-Nearest Neighbors Denoising](https://hal.archives-ouvertes.fr/hal-00518078/document)
 
 [Image denoising with k-nearest neighbor and support vector regression](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=1699598)
+
+[Deep Learning for Single Image Super-Resolution: A Brief Review](https://arxiv.org/pdf/1808.03344.pdf)
+
+[Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network](https://arxiv.org/pdf/1609.05158.pdf)
+
+[Image Super-Resolution Using Deep Convolutional Networks](https://arxiv.org/pdf/1501.00092.pdf)
+
+[Image-Super-Resolution](https://github.com/titu1994/Image-Super-Resolution)
+
+[SAR Image Despeckling Using a Convolutional Neural Network](https://arxiv.org/pdf/1706.00552.pdf)
+
+[Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising](https://arxiv.org/pdf/1608.03981.pdf)
