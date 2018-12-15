@@ -5,8 +5,8 @@ from os import listdir
 
 def getPatch(img, x, y):
     n = []
-    for i in range(-1,1):
-        for j in range(-1,1):
+    for i in range(-1,2):
+        for j in range(-1,2):
             n.append(img[x+i,y+j])
     return n
 

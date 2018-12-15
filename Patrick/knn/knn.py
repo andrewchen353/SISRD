@@ -3,7 +3,7 @@ import data_utils
 import argparse
 from os import makedirs
 from os.path import exists
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsRegressor
 
 training_input_dir = 'xray_images/train_images_64x64/'
 training_output_dir = 'xray_images/train_images_128x128/'
@@ -21,7 +21,7 @@ def main():
     print(labels.shape)
     print(labels[0])
     print('Creating KNeighbors Classifier')
-    knn = KNeighborsClassifier(n_neighbors=10, weights='distance')
+    knn = KNeighborsRegressor(n_neighbors=10, algorithm='kd_tree', weights='distance')
     print('Fitting classifier')
     knn.fit(data,labels)
 
