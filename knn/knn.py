@@ -10,8 +10,8 @@ test_input_dir = 'xray/test_images_64x64/'
 output_path = 'outputs/'
 
 def createDir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+    if not path.exists(path):
+        makedirs(path)
 
 def main():
     print('Loading data from: ' + training_input_dir)
