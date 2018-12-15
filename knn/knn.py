@@ -10,7 +10,7 @@ test_input_dir = 'xray/test_images_64x64/'
 output_path = 'outputs/'
 
 def createDir(path):
-    if not path.exists(path):
+    if not exists(path):
         makedirs(path)
 
 def main():
@@ -32,7 +32,7 @@ def main():
 
     print('Beginning knn...')
     for i in range(numImages):
-        index = np.argmax(np.linalg.norm(train_input - test_input[i,np.newaxis], axis=(2,1)))
+        index = np.argmin(np.linalg.norm(train_input - test_input[i,np.newaxis], axis=(2,1)))
         test_output[i] = train_output[index]
         if i % 400 == 0:
             print('On image ' + str(i))
