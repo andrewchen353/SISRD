@@ -192,6 +192,7 @@ def TEST2(lr):
 
     return model
 
+# https://arxiv.org/pdf/1608.03981.pdf
 def ResNet(lr):
     depth = 16 #v2, v1 = 4
     x_input = Input((64, 64, 1))
