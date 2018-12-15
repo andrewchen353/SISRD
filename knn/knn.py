@@ -26,7 +26,7 @@ def main():
     _, hr_W, hr_H = train_output.shape
     test_output = np.zeros((numImages, hr_W, hr_H))
 
-    patches = 8
+    patches = 16
     lrInterval = int(lr_W / patches)
     hrInterval = int(hr_W / patches)
 
