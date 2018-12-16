@@ -23,3 +23,11 @@
 [SAR Image Despeckling Using a Convolutional Neural Network](https://arxiv.org/pdf/1706.00552.pdf)
 
 [Beyond a Gaussian Denoiser: Residual Learning of Deep CNN for Image Denoising](https://arxiv.org/pdf/1608.03981.pdf)
+
+[Universal Denoising Networks : A Novel CNN Architecture for Image Denoising](https://arxiv.org/pdf/1711.07807.pdf)
+
+[Correction by Projection: Denoising Images with Generative Adversarial Networks](https://arxiv.org/pdf/1803.04477.pdf)
+
+[Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network](https://arxiv.org/pdf/1609.04802.pdf)
+
+[Helpful github with architecture pngs](https://github.com/titu1994/Image-Super-Resolution/tree/8bdd983869f067692f06f9175c9545a6cfda47c9)
