@@ -18,6 +18,6 @@ In [`Patrick`](Patrick/) directory, it contains all of the models that Patrick a
 
 There are also a list of [papers](papers.md) that we used for inspiration, and accuracy_logs that show a list of how our models were performing given various hyperparameters.
 
-[Patrick's accuracy_log](Patrick/accuracy_log.csv)
-
 [Andrew's accuracy_log](Andrew/accuracy_log.csv)
+
+[Patrick's accuracy_log](Patrick/accuracy_log.csv)
