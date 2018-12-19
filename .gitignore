@@ -7,7 +7,7 @@ train_images_64x64
 train_images_128x128
 xray_images
 xray
-knnImages
+knnImages*
 *.pyc
 __pycache__
 sisrd.code-workspace
