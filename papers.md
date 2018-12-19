@@ -29,5 +29,3 @@
 [Correction by Projection: Denoising Images with Generative Adversarial Networks](https://arxiv.org/pdf/1803.04477.pdf)
 
 [Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network](https://arxiv.org/pdf/1609.04802.pdf)
-
-[Helpful github with architecture pngs](https://github.com/titu1994/Image-Super-Resolution/tree/8bdd983869f067692f06f9175c9545a6cfda47c9)
