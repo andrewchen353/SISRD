@@ -11,10 +11,13 @@ In lecture Prof. Sanmi suggested we think simpler models and that something from
 
 ## Repository Guide
 In the [`knn`](knn/) directory, we have our latest implementation that we are using as our final submission.
+
 In [`Andrew`](Andrew/) directory, it contains all of the models that Andrew attempted throughout the process before reaching KNN.
+
 In [`Patrick`](Patrick/) directory, it contains all of the models that Patrick attempted throughout the process before reaching KNN.
 
 There are also a list of [papers](papers.md) that we used for inspiration, and accuracy_logs that show a list of how our models were performing given various hyperparameters.
 
 [Patrick's accuracy_log](Patrick/accuracy_log.csv)
+
 [Andrew's accuracy_log](Andrew/accuracy_log.csv)
