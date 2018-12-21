@@ -247,19 +247,6 @@ def IDCNN(lr):
 
     return model
 
-def SIMPLE(lr):
-    x_input = Input((64, 64, 1))
-
-    conv1 = Conv2D(4, (5, 5), padding='same', use_bias=True, activation='sigmoid')(x_input)
-    spc = SubpixelConv2D(conv1.shape, scale=2)(conv1)
-
-    model = Model(x_input, spc)
-
-    model.compile(loss=loss.custom_loss, optimizer=Adam(lr=lr), metrics=[loss.total_variation_loss, loss.rmse])
-
-    return model
-
-
 def loadModel(name):
     return load_model(name, custom_objects={'rmse': loss.rmse})
     # return load_model(name)
