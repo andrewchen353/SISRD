@@ -22,9 +22,9 @@ There are also a list of [papers](papers.md) that we used for inspiration, and a
 
 [Patrick's accuracy_log](Patrick/accuracy_log.csv)
 
-### Usage Guide
+## Usage Guide
 To run the knn model, enter "python3 knn/knn.py" in the command line. The program assumes that the training and testing data is located in the "xray" directory.
 
 To run either Andrew's or Patrick's implementations, enter the following in the command line:
-"python3 <Andrew/Patrick>/main.py --train --test --model <model_name> --batch <batch_size> --epochs <epochs> --lr <learning_rate> --validation <validation_percentage>"
+"python3 <Andrew/Patrick>/main.py --train --test --model <model_name> --batch <batch_size> --epochs <epochs> --lr <learning_rate> --validation <validation_percentage>".
 It may run with only --train to train and/or only --test to test. Andrew's implementations assume that the data is in the "xray" directory while Patrick's implementation assumes that the data is in the "xray_images" directory.
