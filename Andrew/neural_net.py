@@ -260,7 +260,6 @@ lookup['TEST']     = TEST
 lookup['ResNet']   = ResNet
 lookup['TEST2']    = TEST2
 lookup['IDCNN']    = IDCNN
-lookup['SIMPLE']   = SIMPLE
 
 if __name__ == "__main__":
     cnndae   = lookup['CNNDAE'](0.001)
@@ -271,5 +270,3 @@ if __name__ == "__main__":
     resnet   = lookup['ResNet'](0.001)
     test2    = lookup['TEST2'](0.001)
     idcnn    = lookup['IDCNN'](0.001)
-    simple   = lookup['SIMPLE'](0.001)
-    simple.summary()
