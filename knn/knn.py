@@ -8,7 +8,6 @@ from os.path import exists
 training_input_dir = 'xray/train_images_64x64/'
 training_output_dir = 'xray/train_images_128x128/'
 test_input_dir = 'xray/test_images_64x64/'
-output_path = 'outputs/'
 
 def createDir(path):
     if not exists(path):
@@ -18,6 +17,7 @@ def rmse(y_true, y_pred):
     W = 128
     H = 128
     diff = np.square((y_pred - y_true))
+    print(np.count_nonzero(np.sqrt(np.sum(diff, axis=(2, 1)) / (W * H))))
     return np.sum(np.sqrt(np.sum(diff, axis=(2, 1)) / (W * H)))
 
 def test(test_input, train_images, patches=16):
@@ -71,8 +71,6 @@ def main():
     print('Loading data from: ' + test_input_dir)
     test_input = data_utils.load_data(test_input_dir)
 
-    numTrain = train_input.shape[0]
-
     train_images = (train_input, train_output)
     test_output = test(test_input, train_images, patches=16)
 
@@ -80,19 +78,28 @@ def main():
     createDir('knnImages/')
     data_utils.save_images('knnImages/', test_input_dir, test_output)
 
+    #################################################################
     # Validation
-    validation_input = train_input[-1000:]
-    validation_output = train_output[-1000:]
-    print(validation_input.shape)
-    train_input = train_input[:1000]
-    train_output = train_output[:1000]
-    print(train_input.shape)
+    #################################################################
+    # validation_input = train_input[-1000:]
+    # validation_output = train_output[-1000:]
+    # print(validation_input.shape)
+    # train_input = train_input[:-1000]
+    # train_output = train_output[:-1000]
+    # print(train_input.shape)
 
-    train_images = (train_input, train_output)
-    validation_test_output = test(validation_input, train_images, patches=16)
-    score = rmse(validation_output, validation_test_output)
+    # validation_input = np.concatenate(train_input[:1000], train_input[-1000:])
+    # validation_output = np.concatenate(train_output[:1000], train_output[-1000:])
+    # print(validation_input.shape)
+    # train_input = train_input[1000:-1000]
+    # train_output = train_output[1000:-1000]
+    # print(train_input.shape)
 
-    print('validation rmse: ' + str(2 * score))
+    # train_images = (train_input, train_output)
+    # validation_test_output = test(validation_input, train_images, patches=16)
+    # score = rmse(validation_output, validation_test_output)
+
+    # print('validation rmse: ' + str(2*score))
 
 if __name__ == "__main__":
     main()
